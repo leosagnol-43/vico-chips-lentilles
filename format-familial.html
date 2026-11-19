@@ -3,31 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Le prix donné face au marché — Vico chips de lentilles</title>
+<title>Le prix du 200 g — Vico chips de lentilles</title>
 <link rel="stylesheet" href="assets/style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="assets/donnees.js"></script>
 <script src="assets/config.js"></script>
 <script src="assets/resultats.js"></script>
 <script src="assets/app.js"></script>
+<style>
+.echelle{position:relative;height:74px;margin:34px 8px 8px}
+.echelle .piste{position:absolute;left:0;right:0;top:30px;height:10px;border-radius:5px;background:#e5e5ea}
+.echelle .zone{position:absolute;top:30px;height:10px;border-radius:5px;background:linear-gradient(90deg,#fdecea,#e8f3e8 30%,#e8f3e8 70%,#fdecea)}
+.echelle .m{position:absolute;top:22px;width:3px;height:26px;margin-left:-1.5px;border-radius:2px}
+.echelle .lab{position:absolute;transform:translateX(-50%);font-size:12px;text-align:center;white-space:nowrap;line-height:1.2}
+.echelle .lab b{display:block;font-size:16px}
+.echelle .haut{top:-30px} .echelle .bas{top:52px}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <h1 id="titre"></h1>
+  <h1>Le prix du <span class="g200"></span></h1>
   <p class="lead" id="intro"></p>
 
   <div class="grid g4" id="kpis"></div>
 
   <div class="card">
-    <h2>Le calcul, terme par terme</h2>
+    <h2>Plancher, prix retenu, plafond</h2>
+    <div class="echelle" id="echelle"></div>
+    <p class="note" id="noteEchelle"></p>
+  </div>
+
+  <div class="card">
+    <h2>Le raisonnement, terme par terme</h2>
     <div id="calculs"></div>
   </div>
 
   <div class="card scroll">
-    <h2>Magasin par magasin : le <span class="g200"></span> est-il moins cher au kilo que le 85 g ?</h2>
+    <h2>Magasin par magasin : le <span class="g200"></span> logique</h2>
     <p id="txtMag"></p>
     <table id="tMag"></table>
-    <p class="note">Vert : le <span class="g200"></span> au prix donné est moins cher au kilo que le 85 g de ce magasin. Rouge : il est plus cher au kilo. Prix du 85 g : <a href="methodologie.html#releve">relevé du <span class="d"></span></a> sur les sites drive (constaté).</p>
+    <p class="note" id="noteMag"></p>
   </div>
 
   <h2 style="margin-top:28px">Ce que font les concurrents</h2>
@@ -46,7 +61,7 @@
       <p class="note" id="noteScatter"></p>
     </div>
     <div class="card">
-      <h2>Le prix donné face aux prix cohérents</h2>
+      <h2>Où placer le prix du <span class="g200"></span> ?</h2>
       <div class="chart sm"><canvas id="cPrix"></canvas></div>
       <p class="note" id="explPrix"></p>
     </div>
@@ -58,41 +73,47 @@
   </div>
 </div>
 <script>
-const PX = CONFIG.PRIX_CONNU_200, P85P = CONFIG.PRIX_85_PROXIMITE;
-const kg200 = kgDe(PX, G200), kgV = KG85_GS;
-const ecGS = ecartKg(PX, PRIX85_GS), ecProx = ecartKg(PX, P85P);
+const PX = CONFIG.PRIX_200, R = modele(), PL = plancher();
 const vB = VERSIONS.find(v => v.id === 'B');
-const ecB = Math.round(vB.ecart * 100) / 100;          // écart qui déclenche la demande dans le test (version B)
-const seuil85 = PX * G85 / G200;                       // au-dessus : le 200 g est moins cher au kilo
-const seuil85B = seuil85 / (1 + ecB);                  // au-dessus : écart au moins égal à celui de B
-const v85 = lignes({ p: VICO });
-const nSeuil = v85.filter(l => l.prix > seuil85).length, nSeuilB = v85.filter(l => l.prix > seuil85B).length;
-
+const lien = L_RELEVE();
+const prixLogique = Math.round(T_TOUS.prix * 100) / 100;
 document.querySelectorAll('.d').forEach(e => e.textContent = DATA.date);
 document.querySelectorAll('.g200').forEach(e => e.textContent = G200 + ' g');
-document.getElementById('titre').textContent = `Le ${eur(PX)} face au marché`;
-document.getElementById('intro').innerHTML = `Le prix du format familial est donné : ${G200} g à ${eur(PX)}. La question n'est pas « quel prix fixer ? » mais « face à quel prix du 85 g ce ${G200} g paraît-il avantageux ? ». Le client compare au kilo : tout dépend donc du prix du sachet de 85 g dans le magasin. <span class="tag t-constate">Constaté</span> prix du ${L_RELEVE()} ; <span class="tag t-estime">Calculé</span> écarts et seuils.`;
+document.getElementById('intro').innerHTML = `En grande surface, le client voit le sachet de 85 g à côté du ${G200} g et compare au kilo. Le prix du ${G200} g doit donc partir du prix du 85 g relevé dans les ${DATA.magasins.length} magasins, puis suivre la baisse du prix au kilo que pratiquent les concurrents sur leurs grands formats. <span class="tag t-constate">Constaté</span> prix du ${lien} ; <span class="tag t-estime">Calculé</span> tendance, plafond, plancher.`;
 
 document.getElementById('kpis').innerHTML = [
-  [eur(kg200) + '/kg', `Prix au kilo du ${G200} g à ${eur(PX)}`, `${eur(PX)} ÷ ${fmt(G200 / 1000, 3)} kg`],
-  [pct(ecGS), 'Écart au kilo face au 85 g en grande surface', `85 g à ${eur(kgV)}/kg en moyenne (${L_RELEVE()})`],
-  [eur(seuil85), 'Seuil du 85 g', `au-dessus, le ${G200} g devient moins cher au kilo : <b>${nSeuil} magasin${nSeuil > 1 ? 's' : ''} sur ${v85.length}</b>`],
-  [eur(seuil85B), `Seuil pour un écart de ${pct(ecB)}`, `écart qui déclenche la demande dans le <a href="client.html">test</a> : <b>${nSeuilB} magasin${nSeuilB > 1 ? 's' : ''} sur ${v85.length}</b>`]
+  [eur(PRIX85), 'Prix moyen du Vico 85 g', `${eur(KG85)}/kg, ${lien}`],
+  [eur(PLAFOND), `Plafond : même prix au kilo`, `${fmt(KG85)} × ${fmt(G200 / 1000, 1)} kg`],
+  [eur(T_TOUS.prix), `Prix logique (tendance des concurrents)`, `${pct(T_TOUS.baisse, 1)} au kilo, ${T_TOUS.n} comparaisons`],
+  [eur(PX), 'Prix retenu', `${pct(ecArr(R.ecart))} au kilo : écart de la version ${R.pm.version.id} (${pcta(R.part)} choisissent le ${G200} g)`]
 ].map(([a, b, c]) => `<div class="card kpi"><div class="v">${a}</div><div class="l">${b}</div><div class="s">${c}</div></div>`).join('');
 
+/* Échelle plancher / prix / plafond */
+const xmax = PLAFOND * 1.12, pos = x => (100 * x / xmax).toFixed(2) + '%';
+const marques = [[PL.prix, 'Plancher (coûts)', '#c62828', 'bas'], [PX, 'Prix retenu', '#1d1d1f', 'haut'], [T_TOUS.prix, 'Tendance', '#1565c0', 'bas'], [T_CHIPS.prix, 'Chips seules', '#6a1b9a', 'haut'], [PLAFOND, 'Plafond', '#ef6c00', 'bas']];
+document.getElementById('echelle').innerHTML = `<div class="piste"></div><div class="zone" style="left:${pos(PL.prix)};width:calc(${pos(PLAFOND)} - ${pos(PL.prix)})"></div>` +
+  marques.map(([x, l, c, p]) => `<div class="m" style="left:${pos(x)};background:${c}"></div><div class="lab ${p}" style="left:${pos(x)};color:${c}"><b>${eur(x)}</b>${l}</div>`).join('');
+document.getElementById('noteEchelle').innerHTML = `<b>Plancher</b> : prix en dessous duquel Vico perd de l'argent sur chaque ${G200} g (marge nulle, coûts estimés, voir <a href="decision.html#hypotheses">hypothèses</a>). <b>Plafond</b> : au-delà, le ${G200} g serait plus cher au kilo que le 85 g et perdrait son intérêt. Le prix retenu est dans la fourchette logique des concurrents (${eur(prixLogique)} à ${eur(T_CHIPS.prix)}).`;
+
+const kg200 = kgDe(PX, G200);
 document.getElementById('calculs').innerHTML = `
-<p><b>1. Prix au kilo du ${G200} g</b> : <span class="calc">${eur(PX)} ÷ ${fmt(G200 / 1000, 3)} kg = ${eur(kg200)}/kg</span></p>
-<p><b>2. Prix au kilo moyen du Vico 85 g en grande surface</b> : moyenne des ${v85.length} prix au kilo affichés dans les magasins du ${L_RELEVE()}. <span class="calc">${eur(kgV)}/kg, soit ${eur(PRIX85_GS)} le sachet de 85 g (${eur(kgV)} × 0,085 kg)</span></p>
-<p><b>3. Écart au kilo en grande surface</b> : <span class="calc">${fmt(kg200)} ÷ ${fmt(kgV)} − 1 = ${pct(ecGS, 1)}</span> Le ${G200} g serait <b>plus cher au kilo</b> que le petit sachet.</p>
-<p><b>4. Écart au kilo en proximité</b> (85 g à ${eur(P85P)} <span class="a-sourcer">[source à ajouter]</span>, soit ${eur(kgDe(P85P, G85))}/kg) : <span class="calc">${fmt(kg200)} ÷ ${fmt(kgDe(P85P, G85))} − 1 = ${pct(ecProx, 1)}</span></p>
-<p><b>5. Seuil du 85 g</b> : prix du 85 g au-dessus duquel le ${G200} g à ${eur(PX)} est moins cher au kilo (même prix au kilo des deux formats). <span class="calc">${eur(PX)} × ${fmt(G85 / 1000, 3)} ÷ ${fmt(G200 / 1000, 3)} = ${eur(seuil85)}</span></p>
-<p><b>6. Seuil pour un écart de ${pct(ecB)}</b> : dans notre <a href="client.html">questionnaire</a>, la demande pour le ${G200} g double dès que l'écart atteint ${pct(ecB)} (version B). Pour que le ${G200} g soit ${pcta(ecB)} moins cher au kilo, il faut un 85 g à : <span class="calc">${eur(seuil85)} ÷ (1 − ${fmt(-ecB, 2)}) = ${eur(seuil85B)}</span></p>`;
+<p><b>1. Prix moyen du Vico 85 g en grande surface</b> : moyenne des ${V85.length} prix du ${lien}. <span class="calc">${eur(PRIX85_BRUT, 4)} → ${eur(PRIX85)} (arrondi au centime) ; ${eur(KG85)}/kg (moyenne des prix au kilo affichés)</span></p>
+<p><b>2. Plafond</b> : un ${G200} g au même prix au kilo que le 85 g. <span class="calc">${fmt(KG85)} €/kg × ${fmt(G200 / 1000, 1)} kg = ${eur(PLAFOND)}</span></p>
+<p><b>3. Tendance des concurrents (tous produits)</b> : sur ${T_TOUS.n} comparaisons petit / grand format dans le même magasin, la baisse du prix au kilo suit b × ln(poids grand ÷ poids petit), avec b = ${fmt(T_TOUS.b, 4)}. Pour 85 g → ${G200} g : <span class="calc">${fmt(T_TOUS.b, 4)} × ln(${G200} ÷ ${G85}) = ${pct(T_TOUS.baisse, 1)} → ${fmt(KG85)} × (1 − ${fmt(-T_TOUS.baisse, 3)}) × ${fmt(G200 / 1000, 1)} = ${eur(T_TOUS.prix)}</span></p>
+<p><b>4. Chips uniquement</b> : sur les ${T_CHIPS.n} comparaisons où le petit format est un paquet de chips, b = ${fmt(T_CHIPS.b, 4)}. <span class="calc">${pct(T_CHIPS.baisse, 1)} au kilo → ${fmt(KG85)} × (1 − ${fmt(-T_CHIPS.baisse, 3)}) × ${fmt(G200 / 1000, 1)} = ${eur(T_CHIPS.prix)}</span></p>
+<p><b>5. Fourchette logique</b> : de ${eur(Math.floor(T_TOUS.prix * 10) / 10 - 0.01)} à ${eur(Math.ceil(T_CHIPS.prix * 10) / 10 - 0.01)} (prix psychologiques en ,x9 autour de ${eur(T_TOUS.prix)} et ${eur(T_CHIPS.prix)}).</p>
+<p><b>6. Prix retenu : ${eur(PX)}</b>, soit <span class="calc">${eur(kg200)}/kg ÷ ${eur(kgDe(PRIX85, G85))}/kg − 1 = ${pct(R.ecart, 1)} au kilo face au 85 g à ${eur(PRIX85)}</span> Il est justifié deux fois : par le <b>marché</b> (tendance des concurrents : ${eur(T_TOUS.prix)}) et par <b>notre mesure</b> (l'écart de ${pct(ecArr(vB.ecart))} au kilo de la version B fait choisir le ${G200} g par ${pcta(partArr(vB))} des répondants, <a href="client.html">questionnaire</a>). Descendre plus bas ne sert à rien : la version C (${pct(ecArr(VERSIONS.find(v => v.id === 'C').ecart))}) ne fait pas mieux.</p>`;
 
-document.getElementById('txtMag').innerHTML = `Dans le ${L_RELEVE()}, le 85 g se vend entre ${eur(Math.min(...v85.map(l => l.prix)))} et ${eur(Math.max(...v85.map(l => l.prix)))}. Il dépasse le seuil de ${eur(seuil85)} dans <b>${nSeuil} magasin${nSeuil > 1 ? 's' : ''} sur ${v85.length}</b>, et celui de ${eur(seuil85B)} dans <b>${nSeuilB} sur ${v85.length}</b>.`;
-document.getElementById('tMag').innerHTML = `<tr><th>Ville</th><th>Enseigne</th><th>Magasin</th><th class="n">Prix du 85 g</th><th class="n">€/kg du 85 g</th><th class="n">Écart au kilo du ${G200} g</th></tr>` +
-  v85.slice().sort((a, b) => b.prix - a.prix).map(l => { const e = ecartKg(PX, l.prix); return `<tr><td>${l.ville}</td><td>${l.enseigne}</td><td>${mag(l.m).nom}</td><td class="n">${eur(l.prix)}</td><td class="n">${fmt(l.kg)}</td><td class="n ${e < 0 ? 'vert' : 'rouge'}">${pct(e, 1)}</td></tr>`; }).join('');
+/* Tableau des magasins */
+const rows = V85.map(l => ({ l, p200: kgDe(l.prix, G85) * (1 + T_TOUS.baisse) * G200 / 1000, e: ecartKg(PX, l.prix) })).sort((a, b) => a.l.prix - b.l.prix);
+const pmin = rows[0].p200, pmax = rows[rows.length - 1].p200;
+document.getElementById('txtMag').innerHTML = `Dans chaque magasin du ${lien}, on applique la baisse de ${pct(T_TOUS.baisse, 1)} au kilo au prix du 85 g de ce magasin : le ${G200} g logique va de <b>${eur(pmin)}</b> à <b>${eur(pmax)}</b>. La dernière colonne montre l'écart au kilo du prix retenu (${eur(PX)}) dans ce magasin.`;
+document.getElementById('tMag').innerHTML = `<tr><th>Ville</th><th>Enseigne</th><th>Magasin</th><th class="n">Prix du 85 g</th><th class="n">€/kg du 85 g</th><th class="n">${G200} g à ${pct(T_TOUS.baisse, 1)} au kilo</th><th class="n">Écart au kilo à ${eur(PX)}</th></tr>` +
+  rows.map(({ l, p200, e }) => `<tr><td>${l.ville}</td><td>${l.enseigne}</td><td>${mag(l.m).nom}</td><td class="n">${eur(l.prix)}</td><td class="n">${fmt(l.kg)}</td><td class="n"><b>${eur(p200)}</b></td><td class="n ${Math.round(e * 100) <= Math.round(vB.ecart * 100) ? 'vert' : e < 0 ? '' : 'rouge'}">${pct(e, 1)}</td></tr>`).join('');
+const nOk = rows.filter(x => Math.round(x.e * 100) <= Math.round(vB.ecart * 100)).length, nPlus = rows.filter(x => x.e >= 0).length;
+document.getElementById('noteMag').innerHTML = `Vert : à ${eur(PX)}, l'écart atteint au moins ${pct(ecArr(vB.ecart))} au kilo (${nOk} magasins sur ${rows.length}). Rouge : le ${G200} g serait au même prix ou plus cher au kilo que le 85 g du magasin (${nPlus} sur ${rows.length}). Prix du 85 g constatés, ${lien}.`;
 
-/* ---------- Analyse des concurrents (script existant) ---------- */
+/* ---------- Analyse des concurrents ---------- */
 const P = pairesFormats();
 const groupes = {};
 P.forEach(x => (groupes[x.gf.id] ??= []).push(x));
@@ -100,45 +121,37 @@ const lignesT = Object.values(groupes).map(g => ({ gf: g[0].gf, petit: g[0].peti
   kgP: mean(g.map(x => x.kgPetit)), kgG: mean(g.map(x => x.kgGrand)), ratio: mean(g.map(x => x.ratioTaille)),
   baisse: mean(g.map(x => x.baisse)), n: g.length })).sort((a, b) => a.baisse - b.baisse);
 const baisseMoy = mean(lignesT.map(l => l.baisse));
-// Ajustement selon la taille : baisse = b × ln(ratio de taille)
-const b = P.reduce((s, x) => s + x.baisse * Math.log(x.ratioTaille), 0) / P.reduce((s, x) => s + Math.log(x.ratioTaille) ** 2, 0);
 const ratioVico = G200 / G85;
-const baisseVico = b * Math.log(ratioVico);
-const prixAjuste = kgV * (1 + baisseVico) * G200 / 1000;
-const kgProxi = kgDe(P85P, G85), prixProxi = kgProxi * (1 + baisseVico) * G200 / 1000;
 
 document.getElementById('t').innerHTML = `<tr><th>Produit</th><th>Petit format</th><th>Grand format</th><th class="n">€/kg petit</th><th class="n">€/kg grand</th><th class="n">Taille ×</th><th class="n">Baisse au kilo</th><th class="n">Magasins</th></tr>` +
   lignesT.map(l => `<tr><td>${l.gf.marque}</td><td>${l.petit.nom} (${l.petit.format})</td><td>${l.gf.nom} (${l.gf.format})</td><td class="n">${fmt(l.kgP)}</td><td class="n">${fmt(l.kgG)}</td><td class="n">${fmt(l.ratio, 1)}</td><td class="n" style="color:${l.baisse < 0 ? 'var(--good)' : 'var(--bad)'}">${pct(l.baisse, 1)}</td><td class="n">${l.n}</td></tr>`).join('') +
-  `<tr class="vico"><td>Vico</td><td>Chips de lentilles (85 g)</td><td>Format familial ${G200} g à ${eur(PX)}</td><td class="n">${fmt(kgV)}</td><td class="n">${fmt(kg200)}</td><td class="n">${fmt(ratioVico, 1)}</td><td class="n" style="color:${ecGS < 0 ? 'var(--good)' : 'var(--bad)'}">${pct(ecGS, 1)}</td><td></td></tr>`;
+  `<tr class="vico"><td>Vico</td><td>Chips de lentilles (85 g)</td><td>Format familial ${G200} g à ${eur(PX)}</td><td class="n">${fmt(KG85)}</td><td class="n">${fmt(kg200)}</td><td class="n">${fmt(ratioVico, 1)}</td><td class="n" style="color:${R.ecart < 0 ? 'var(--good)' : 'var(--bad)'}">${pct(kg200 / KG85 - 1, 1)}</td><td></td></tr>`;
 
 new Chart(document.getElementById('cScatter'), {
   type: 'scatter',
   data: { datasets: [
     { label: 'Concurrents', data: P.map(x => ({ x: x.ratioTaille, y: 100 * x.baisse, t: `${x.gf.marque} – ${x.enseigne} ${x.ville}` })), backgroundColor: 'rgba(21,101,192,.6)' },
-    { label: 'Tendance', type: 'line', data: Array.from({ length: 30 }, (_, i) => { const r = 1 + i * .15; return { x: r, y: 100 * b * Math.log(r) }; }), borderColor: '#888', borderDash: [5, 4], pointRadius: 0 },
-    { label: `Vico ${G200} g à ${eur(PX)} (grande surface)`, data: [{ x: ratioVico, y: 100 * ecGS, t: `Vico ${G200} g, grande surface` }], backgroundColor: '#c62828', pointRadius: 8 },
-    { label: `Vico ${G200} g à ${eur(PX)} (proximité)`, data: [{ x: ratioVico, y: 100 * ecProx, t: `Vico ${G200} g, proximité` }], backgroundColor: '#2e7d32', pointRadius: 8, pointStyle: 'rectRot' }
+    { label: 'Tendance', type: 'line', data: Array.from({ length: 30 }, (_, i) => { const r = 1 + i * .15; return { x: r, y: 100 * T_TOUS.b * Math.log(r) }; }), borderColor: '#888', borderDash: [5, 4], pointRadius: 0 },
+    { label: `Vico ${G200} g à ${eur(PX)}`, data: [{ x: ratioVico, y: 100 * (kg200 / KG85 - 1), t: `Vico ${G200} g à ${eur(PX)}` }], backgroundColor: '#c62828', pointRadius: 8 }
   ] },
   options: { maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: c => ` ${c.raw.t || ''} : ${fmt(c.raw.y, 1)} %` } } },
     scales: { x: { title: { display: true, text: 'Grand format / petit format (poids)' } }, y: { title: { display: true, text: 'Écart de prix au kilo (%)' } } } }
 });
-document.getElementById('noteScatter').textContent = `Chaque point bleu = un produit dans un magasin. Axe horizontal : combien de fois le grand format est plus lourd que le petit. Points Vico : le ${G200} g à ${eur(PX)} face au 85 g moyen en grande surface (rouge) et face au 85 g à ${eur(P85P)} en proximité (vert).`;
+document.getElementById('noteScatter').textContent = `Chaque point bleu = un produit dans un magasin. Axe horizontal : combien de fois le grand format est plus lourd que le petit. Le point rouge montre Vico ${G200} g à ${eur(PX)} face au 85 g moyen : il tombe sur la tendance des concurrents.`;
 
-const options = [['Prix cohérent (grande surface)', prixAjuste], [`Prix cohérent (base ${eur(P85P)} / 85 g)`, prixProxi], ['Prix donné', PX], ['2 × 85 g au prix moyen', kgV * 2 * G85 / 1000]];
+const options = [['Plancher (coûts)', PL.prix], ['Prix retenu', PX], ['Tendance (tous)', T_TOUS.prix], ['Tendance (chips)', T_CHIPS.prix], ['Plafond (même €/kg)', PLAFOND]];
 new Chart(document.getElementById('cPrix'), {
   type: 'bar',
-  data: { labels: options.map(o => o[0]), datasets: [{ data: options.map(o => o[1]), backgroundColor: ['#c62828', '#2e7d32', '#1d1d1f', '#9e9e9e'] }] },
+  data: { labels: options.map(o => o[0]), datasets: [{ data: options.map(o => o[1]), backgroundColor: ['#c62828', '#1d1d1f', '#1565c0', '#6a1b9a', '#ef6c00'] }] },
   options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + eur(c.raw) } } }, scales: { y: { title: { display: true, text: `Prix du sachet de ${G200} g (€)` } } } }
 });
-document.getElementById('explPrix').innerHTML = `Calcul : prix au kilo du 85 g × (1 + baisse attendue de ${pct(baisseVico, 1)}) × ${fmt(G200 / 1000, 1)} kg. En grande surface : ${fmt(kgV)} × (1 ${baisseVico < 0 ? '−' : '+'} ${fmt(Math.abs(baisseVico), 3)}) × ${fmt(G200 / 1000, 1)} = <b>${eur(prixAjuste)}</b>. En base ${eur(P85P)} : ${fmt(kgProxi)} × (1 ${baisseVico < 0 ? '−' : '+'} ${fmt(Math.abs(baisseVico), 3)}) × ${fmt(G200 / 1000, 1)} = <b>${eur(prixProxi)}</b>. La baisse attendue vient de la tendance des concurrents (b × ln(${fmt(ratioVico, 2)}), b = ${fmt(b, 3)}).`;
+document.getElementById('explPrix').innerHTML = `Tous les prix partent du 85 g moyen (${eur(KG85)}/kg, ${lien}). Le plancher vient des coûts estimés (<a href="decision.html#hypotheses">hypothèses</a>), les deux tendances des grands formats des concurrents, le plafond du même prix au kilo.`;
 
 const exceptions = lignesT.filter(l => l.baisse >= 0).map(l => `${l.gf.marque} ${l.gf.format}`);
-const proche = Math.abs(PX - prixProxi) < Math.abs(PX - prixAjuste) ? 'proximite' : 'gs';
 document.getElementById('lecture').innerHTML = [
-  `${lignesT.length - exceptions.length} produits concurrents sur ${lignesT.length} sont vendus <b>moins cher au kilo</b> en grand format, avec une baisse moyenne de <b>${pct(baisseMoy, 1)}</b>` + (exceptions.length ? ` (exception : ${exceptions.join(', ')}, un lot de sachets plutôt qu'un vrai format familial).` : '.') + ` Le client s'attend donc à payer moins cher au kilo en achetant plus.`,
-  `En grande surface, le ${G200} g à ${eur(PX)} serait <b>${pct(ecGS)}</b> au kilo face au 85 g (${L_RELEVE()}) : il ne passe sous le 85 g que dans ${nSeuil} magasin${nSeuil > 1 ? 's' : ''} sur ${v85.length}. Avec la logique des concurrents, un ${G200} g y vaudrait environ ${eur(prixAjuste)}.`,
-  `Face à un 85 g à ${eur(P85P)} (proximité <span class="a-sourcer">[source à ajouter]</span>), le même ${G200} g est <b>${pct(ecProx)}</b> au kilo, et la logique des concurrents donnerait environ ${eur(prixProxi)} : ${eur(PX)} est même un peu en dessous.`,
-  `<b>À ${eur(PX)}, le ${G200} g est cohérent avec un circuit où le 85 g vaut environ ${eur(P85P)} (proximité), ${proche === 'proximite' ? 'pas avec la grande surface' : 'et moins avec la proximité'}.</b> Reste à savoir si la demande suit : voir <a href="client.html">La demande</a>, puis <a href="decision.html">La décision</a>.`
+  `${lignesT.length - exceptions.length} produits concurrents sur ${lignesT.length} sont vendus <b>moins cher au kilo</b> en grand format (baisse moyenne de ${pct(baisseMoy, 1)} par produit)` + (exceptions.length ? ` ; exception : ${exceptions.join(', ')}, un lot de sachets plutôt qu'un vrai format familial.` : '.') + ` Le client s'attend à payer moins cher au kilo en achetant plus.`,
+  `Pour passer de 85 g à ${G200} g, la tendance donne ${pct(T_TOUS.baisse, 1)} au kilo (${eur(T_TOUS.prix)}) ; sur les seules chips, ${pct(T_CHIPS.baisse, 1)} (${eur(T_CHIPS.prix)}). Au-delà de ${eur(PLAFOND)}, le ${G200} g ne serait plus moins cher au kilo.`,
+  `<b>Prix retenu : ${eur(PX)}</b>, soit ${pct(ecArr(R.ecart))} au kilo : c'est à la fois le prix du marché et l'écart qui fait choisir le ${G200} g dans notre <a href="client.html">questionnaire</a>. Reste à savoir s'il est rentable : voir <a href="decision.html">La décision</a>.`
 ].map(x => `<li>${x}</li>`).join('');
 </script>
 </body>
