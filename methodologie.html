@@ -92,7 +92,7 @@ document.getElementById('lQuest').innerHTML = [
 ].map(x => `<li>${x}</li>`).join('');
 const AS = [
   ['entreprise.html', "L'entreprise", ['Chiffres des comptes (Xerfi) à vérifier sur les PDF officiels (Pappers), dans « Qui est derrière Vico ? ».', 'Même vérification, sous le tableau des comptes.', 'Curly et Bénénuts seraient aussi des marques du groupe (Limites).']],
-  ['decision.html#hypotheses', 'La décision', ['Hypothèses : TVA à 5,5 %, marge du distributeur, coût de fabrication, emballage, autres frais, coûts fixes du lancement, cannibalisation, volume de référence.']]
+  ['decision.html#hypotheses', 'La décision', ['Hypothèses : TVA à 5,5 %, marge du distributeur, coût de fabrication, emballage, autres frais, coûts fixes du lancement, cannibalisation, volume de référence, nombre de magasins.', 'Nombre de magasins, dans « Le volume est-il vraisemblable ? ».']]
 ];
 document.getElementById('lASourcer').innerHTML = AS.map(([h, t, l]) => `<li><a href="${h.includes("#") ? h : h + "#a-sourcer-liste"}">${t}</a><ul>${l.map(x => `<li>${x}</li>`).join('')}</ul></li>`).join('');
 document.querySelectorAll('.d').forEach(e => e.textContent = DATA.date);
