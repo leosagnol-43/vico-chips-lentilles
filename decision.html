@@ -37,6 +37,7 @@
       <label>Coûts fixes du lancement (€) <span class="val" id="v_cf"></span><input type="range" id="cf" min="20000" max="500000" step="5000"></label>
       <label>Cannibalisation (85 g perdus par <span class="g200"></span> vendu) <span class="val" id="v_can"></span><input type="range" id="can" min="0" max="2" step="0.1"></label>
       <label>Volume de référence (<span class="g200"></span> vendus par an si <span class="pref"></span> le choisissaient) <span class="val" id="v_vol"></span><input type="range" id="vol" min="20000" max="1000000" step="10000"></label>
+      <label>Magasins qui vendent le <span class="g200"></span> <span class="val" id="v_nbm"></span><input type="range" id="nbm" min="500" max="10000" step="100"></label>
       <p class="note"><a href="#" id="reset">Revenir aux valeurs de config.js</a></p>
     </div>
     <div>
@@ -61,6 +62,19 @@
     <h2>b) Le calcul de la marge, étape par étape</h2>
     <div id="etapes"></div>
     <table id="detail"></table>
+  </div>
+
+  <div class="grid g2">
+    <div class="card scroll">
+      <h2>Résultat sur 3 ans</h2>
+      <p class="note">Les coûts de lancement ne sont payés qu'en année 1 ; ensuite, chaque année rapporte la marge gagnée sur les ventes attendues (volume et marge supposés constants).</p>
+      <table id="t3ans"></table>
+      <p id="remb" style="margin-top:12px"></p>
+    </div>
+    <div class="card">
+      <h2>Le volume est-il vraisemblable ?</h2>
+      <div id="vraisemblance"></div>
+    </div>
   </div>
 
   <div class="card scroll">
@@ -96,7 +110,7 @@ document.querySelectorAll('.p399').forEach(e => e.textContent = eur(P399));
 
 /* Curseurs : [id, clé de CONFIG, facteur d'affichage] */
 const SL = [['p200', 'PRIX_200', 1], ['md', 'MARGE_DISTRIB', 100], ['ck', 'FABRICATION_KG', 1], ['e200', 'EMB_200', 1],
-  ['e85', 'EMB_85', 1], ['cv', 'AUTRES_FRAIS', 100], ['cf', 'COUTS_FIXES', 1], ['can', 'CANNIBALISATION', 1], ['vol', 'VOLUME_REF', 1]];
+  ['e85', 'EMB_85', 1], ['cv', 'AUTRES_FRAIS', 100], ['cf', 'COUTS_FIXES', 1], ['can', 'CANNIBALISATION', 1], ['vol', 'VOLUME_REF', 1], ['nbm', 'NB_MAGASINS', 1]];
 $('p200').min = 2.49; $('p200').max = Math.max(4.99, Math.ceil(PLAFOND * 10) / 10);
 function reset() { SL.forEach(([id, k, f]) => { const el = $(id); el.min = Math.min(+el.min, CONFIG[k] * f); el.max = Math.max(+el.max, CONFIG[k] * f); el.value = CONFIG[k] * f; }); }
 reset();
@@ -169,10 +183,29 @@ function calc() {
     options: { animation: false, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + nb(c.raw) + ' €' } } },
       scales: { x: { title: { display: true, text: `Sachets de ${G200} g vendus` }, ticks: { maxTicksLimit: 6 } }, y: { title: { display: true, text: 'Résultat (€)' } } } } });
 
+  // Résultat sur 3 ans
+  $('v_nbm').textContent = nb(h.NB_MAGASINS);
+  const Y = r.annees;
+  $('t3ans').innerHTML = `<tr><th></th>${Y.map(y => `<th class="n">Année ${y.n}</th>`).join('')}</tr>` +
+    `<tr><td>Marge gagnée annuelle<br><span class="note">${nb(r.volume)} × ${eur(r.gain)}</span></td>${Y.map(y => `<td class="n">${sg(y.marge)}</td>`).join('')}</tr>` +
+    `<tr><td>Coûts de lancement</td>${Y.map(y => `<td class="n">${y.couts ? '−' + nb(y.couts) + ' €' : '–'}</td>`).join('')}</tr>` +
+    `<tr><td><b>Résultat de l'année</b></td>${Y.map(y => `<td class="n ${cls(y.resultat)}"><b>${sg(y.resultat)}</b></td>`).join('')}</tr>` +
+    `<tr class="vico"><td>Résultat cumulé</td>${Y.map(y => `<td class="n ${cls(y.cumul)}">${sg(y.cumul)}</td>`).join('')}</tr>`;
+  $('remb').innerHTML = isFinite(r.moisRemb)
+    ? `Le lancement est remboursé en <b>${fmt(r.moisRemb, 1)} mois</b> de ventes <span class="calc">${nb(h.COUTS_FIXES)} ÷ (${nb(r.margeAn)} ÷ 12) = ${fmt(r.moisRemb, 1)} mois</span> Sur 3 ans, le résultat cumulé atteint <b class="${cls(r.cumul3)}">${sg(r.cumul3)}</b>.`
+    : `Avec ces hypothèses, la marge gagnée n'est pas positive : le lancement n'est jamais remboursé.`;
+
+  // Vraisemblance du volume
+  $('vraisemblance').innerHTML = `<p>Ventes par magasin et par semaine = volume attendu ÷ magasins ÷ 52 semaines :</p>
+<div class="calc">${nb(r.volume)} ÷ ${nb(h.NB_MAGASINS)} ÷ 52 = ${fmt(r.parMagSem, 1)} sachet${r.parMagSem >= 2 ? 's' : ''} de ${G200} g par magasin et par semaine</div>
+<p class="big" style="font-size:28px">${fmt(r.parMagSem, 1)} <span class="note" style="font-size:14px;font-weight:400">par magasin et par semaine</span></p>
+<p>Si ce chiffre paraît faible pour un produit en rayon, notre volume de référence est <b>prudent</b>. Le stress test montre l'effet d'un volume deux fois plus élevé (${fmt(r.parMagSem * 2, 1)} sachets par magasin et par semaine).</p>
+<p class="note">Nombre de magasins : ${nb(h.NB_MAGASINS)}, hypothèse <span class="a-sourcer">[source à ajouter]</span> ; piste : nombre d'hypermarchés et de supermarchés en France (INSEE, LSA).</p>`;
+
   // d) stress test
   const st = stressTest(h);
-  $('tStress').innerHTML = `<tr><th>Scénario</th><th class="n">Marge gagnée</th><th class="n">Seuil</th><th class="n">Part minimale</th><th class="n">Volume</th><th class="n">Résultat</th></tr>` +
-    st.map(({ nom, r: x }, i) => `<tr${i === 0 ? ' class="vico"' : ''}><td>${nom}</td><td class="n">${eur(x.gain)}</td><td class="n">${isFinite(x.seuil) ? nb(x.seuil) : '–'}</td><td class="n">${pcta(x.partMin, 1)}</td><td class="n">${nb(x.volume)}</td><td class="n ${cls(x.resultat)}"><b>${sg(x.resultat)}</b></td></tr>`).join('');
+  $('tStress').innerHTML = `<tr><th>Scénario</th><th class="n">Marge gagnée</th><th class="n">Seuil</th><th class="n">Part minimale</th><th class="n">Volume</th><th class="n">Résultat (année 1)</th><th class="n">Cumul 3 ans</th></tr>` +
+    st.map(({ nom, r: x }, i) => `<tr${i === 0 ? ' class="vico"' : ''}><td>${nom}</td><td class="n">${eur(x.gain)}</td><td class="n">${isFinite(x.seuil) ? nb(x.seuil) : '–'}</td><td class="n">${pcta(x.partMin, 1)}</td><td class="n">${nb(x.volume)}</td><td class="n ${cls(x.resultat)}"><b>${sg(x.resultat)}</b></td><td class="n ${cls(x.cumul3)}">${sg(x.cumul3)}</td></tr>`).join('');
   const chute = 1 - r.seuil / r.volume;
   $('stressTxt').innerHTML = chute > 0
     ? `Le lancement lâche si les ventes sont inférieures de <b>${pcta(chute, 1)}</b> aux prévisions (${nb(r.seuil)} au lieu de ${nb(r.volume)} sachets). L'hypothèse la plus fragile est <b>le volume</b> : le volume de référence (${nb(h.VOLUME_REF)} sachets par an) n'est pas sourcé, et le résultat lui est directement proportionnel.`
@@ -202,7 +235,8 @@ const H = [
   ['Coûts fixes du lancement', nb(K.COUTS_FIXES) + ' €', 'Adaptation de la ligne de conditionnement, design du sachet, frais de référencement payés aux enseignes, communication.', '<span class="a-sourcer">[source à ajouter]</span> pistes : LSA (frais de référencement), Observatoire de la formation des prix et des marges', 'e'],
   ['Cannibalisation', fmt(K.CANNIBALISATION, 1) + ' sachet de 85 g', 'Valeur médiane entre 0 (le 200 g n\'attire que des nouveaux acheteurs) et 1 (chaque 200 g remplace un 85 g). Le <a href="client.html">questionnaire</a> mesure le choix entre les deux formats, pas ce qui serait acheté sans le 200 g : testé à 1 dans le stress test.', '<span class="a-sourcer">[source à ajouter]</span> piste : test en magasin', 'e'],
   ['Volume de référence', nb(K.VOLUME_REF) + ' sachets de ' + G200 + ' g par an', `Ventes annuelles du ${G200} g si ${pcta(K.PART_REF)} des acheteurs le choisissaient. Hypothèse la plus fragile : le résultat lui est proportionnel.`, '<span class="a-sourcer">[source à ajouter]</span> pistes : LSA (ventes de la catégorie), Observatoire de la formation des prix et des marges, test en magasin', 'e'],
-  ['Part de référence', pcta(K.PART_REF), 'Part qui choisit le 200 g dans la meilleure version mesurée (C) : sert à convertir une part de choix en volume.', `<a href="client.html">Questionnaire</a>, ${RESULTATS.collecte.debut}–${RESULTATS.collecte.fin}`, 'c']
+  ['Part de référence', pcta(K.PART_REF), 'Part qui choisit le 200 g dans la meilleure version mesurée (C) : sert à convertir une part de choix en volume.', `<a href="client.html">Questionnaire</a>, ${RESULTATS.collecte.debut}–${RESULTATS.collecte.fin}`, 'c'],
+  ['Nombre de magasins', nb(K.NB_MAGASINS) + ' hypers et supermarchés', 'Sert seulement à contrôler la vraisemblance du volume (ventes par magasin et par semaine).', '<span class="a-sourcer">[source à ajouter]</span> pistes : nombre d\'hypermarchés et de supermarchés en France (INSEE, LSA)', 'e']
 ];
 $('tHyp').innerHTML = `<tr><th>Hypothèse</th><th>Valeur</th><th>Pourquoi</th><th>Source</th></tr>` +
   H.map(([n, v, p, s, t]) => `<tr><td><b>${n}</b><br><span class="tag ${t === 'c' ? 't-constate' : 't-estime'}">${t === 'c' ? 'Constaté' : 'Estimé'}</span></td><td>${v}</td><td>${p}</td><td>${s}</td></tr>`).join('');
@@ -214,7 +248,7 @@ $('reco').innerHTML = [
   `<b>Afficher le prix au kilo en grand</b> : ${pcta(Pr.economieVue.oui)} de ceux qui voient l'économie choisissent le ${G200} g, contre ${pcta(Pr.economieVue.non)} ; et ${fmt(Pr.economieVue.nePasVoir * 3, 0)} client sur 3 ne la voit pas (<a href="client.html">questionnaire</a>).`,
   `<b>Viser les familles</b> (${pcta(Pr.enfants.oui)} des foyers avec enfants choisissent le ${G200} g, contre ${pcta(Pr.enfants.non)}) et <b>placer le ${G200} g à côté des grands paquets de chips</b> (${pcta(Pr.grandsFormats.oui)} des habitués des grands formats le choisissent).`,
   `<b>Garder le 85 g</b> : les étudiants le préfèrent (${pcta(Pr.etudiants.oui)} seulement choisissent le ${G200} g) et ${pcta(Pr.dejaAchete.jamaisAchete)} des répondants n'ont jamais acheté de chips de lentilles : le petit sachet sert à faire découvrir le produit.`,
-  `<b>Faire d'abord un test en magasin</b> : à ${eur(K.PRIX_200)}, la rentabilité tient à ${fmt(Math.ceil((1 - R0.seuil / R0.volume) * 100), 0)} % près (ventes attendues ${nb(R0.volume)}, seuil ${nb(R0.seuil)}), sur des intentions déclarées et un volume de référence non sourcé.`
+  `À ${eur(K.PRIX_200)}, le lancement est remboursé en ${Math.abs(R0.moisRemb - 12) <= 1.5 ? 'un an environ' : 'environ ' + fmt(R0.moisRemb, 0) + ' mois'} (${fmt(R0.moisRemb, 1)} mois de ventes) ; le risque porte sur le <b>volume réel</b>, d'où <b>un test en magasin</b> avant de généraliser (ventes attendues ${nb(R0.volume)} par an, soit ${fmt(R0.parMagSem, 1)} sachet${R0.parMagSem >= 2 ? 's' : ''} par magasin et par semaine).`
 ].map(x => `<li>${x}</li>`).join('');
 </script>
 </body>

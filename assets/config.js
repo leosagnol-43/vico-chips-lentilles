@@ -25,5 +25,8 @@ const CONFIG = {
 
   // --- Passage de la part de choix à un volume ---
   VOLUME_REF: 200000,       // 200 g vendus par an si PART_REF des acheteurs choisissaient le 200 g
-  PART_REF: 0.53
+  PART_REF: 0.53,
+
+  // --- Contrôle de vraisemblance du volume ---
+  NB_MAGASINS: 3000         // hypers et supermarchés qui vendraient le 200 g (hypothèse, source à ajouter)
 };

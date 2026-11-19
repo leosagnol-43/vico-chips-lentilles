@@ -180,7 +180,14 @@ function modele(h = CONFIG, opt = {}) {
   const pm = partMesuree(ecart);
   const part = opt.part ?? pm.part;
   const volume = h.VOLUME_REF * part / h.PART_REF * (opt.facteurDemande ?? 1);
-  return { prix85, prix200, a, b, gain, seuil, partMin, ecart, pm, part, volume, resultat: volume * gain - h.COUTS_FIXES };
+  const margeAn = volume * gain;                          // marge gagnée chaque année
+  // Sur 3 ans : les coûts de lancement ne sont payés qu'en année 1
+  const annees = [1, 2, 3].map(n => ({ n, marge: margeAn, couts: n === 1 ? h.COUTS_FIXES : 0 }));
+  let c = 0; annees.forEach(y => { y.resultat = y.marge - y.couts; y.cumul = (c += y.resultat); });
+  return { prix85, prix200, a, b, gain, seuil, partMin, ecart, pm, part, volume, margeAn, annees,
+    resultat: margeAn - h.COUTS_FIXES, cumul3: c,
+    moisRemb: margeAn > 0 ? h.COUTS_FIXES / (margeAn / 12) : Infinity,   // mois de ventes pour rembourser le lancement
+    parMagSem: volume / h.NB_MAGASINS / 52 };                           // sachets vendus par magasin et par semaine
 }
 
 /* Stress test */
@@ -191,7 +198,8 @@ function stressTest(h = CONFIG) {
     ['Demande −30 %', h, { facteurDemande: 0.7 }],
     ['Cannibalisation = 1 (chaque 200 g remplace un 85 g)', { ...h, CANNIBALISATION: 1 }, {}],
     ['Marge du distributeur 35 %', { ...h, MARGE_DISTRIB: 0.35 }, {}],
-    ['Cumul : coût +15 %, demande −30 %, cannibalisation 1', { ...h, FABRICATION_KG: h.FABRICATION_KG * 1.15, CANNIBALISATION: 1 }, { facteurDemande: 0.7 }]
+    ['Cumul : coût +15 %, demande −30 %, cannibalisation 1', { ...h, FABRICATION_KG: h.FABRICATION_KG * 1.15, CANNIBALISATION: 1 }, { facteurDemande: 0.7 }],
+    [`Volume ×2 (${fmt(modele(h).parMagSem * 2, 1)} sachets par magasin et par semaine)`, h, { facteurDemande: 2 }]
   ];
   return sc.map(([nom, hh, o]) => ({ nom, r: modele(hh, o) }));
 }
