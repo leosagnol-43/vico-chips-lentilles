@@ -13,24 +13,19 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>La décision : la demande couvre-t-elle le coût du lancement ?</h1>
-  <p class="lead">Le prix est donné. On calcule combien de <span class="g200"></span> il faut vendre pour couvrir les coûts du lancement, on traduit ce seuil en <b>part des acheteurs</b> qui doivent choisir le <span class="g200"></span>, et on compare à la part <a href="client.html">mesurée dans le questionnaire</a>, circuit par circuit. Les curseurs partent des valeurs de <code>config.js</code> (<span class="tag t-estime">estimées</span>, voir <a href="#hypotheses">Hypothèses</a>) : tout se recalcule.</p>
+  <h1>La décision : à quel prix, et combien en vendre ?</h1>
+  <p class="lead">On calcule la marge de Vico sur chaque <span class="g200"></span>, le nombre de sachets à vendre pour couvrir le lancement, puis on compare aux ventes attendues d'après la <a href="client.html">demande mesurée</a>. Les curseurs partent des valeurs de <code>config.js</code> (<span class="tag t-estime">estimées</span>, voir <a href="#hypotheses">Hypothèses</a>) ; le prix du 85 g vient du <a href="methodologie.html#releve">relevé du <span class="d"></span></a>. Tout se recalcule.</p>
 
-  <div class="card problem">
-    <h3>a) La question et la réponse</h3>
-    <q class="question" id="question"></q>
-    <ul id="reponses" style="margin-top:12px"></ul>
+  <div class="card">
+    <h2>a) Trois prix, trois logiques</h2>
+    <div class="grid g3" id="troisPrix"></div>
   </div>
 
   <div class="grid g2">
     <div class="card sim">
       <h2>Les curseurs</h2>
-      <label>Circuit
-        <select id="circuit" style="width:100%;margin-top:4px"></select>
-      </label>
       <h3>Prix en magasin</h3>
-      <label>Prix du format <span class="g200"></span> (donné) <span class="val" id="v_p200"></span><input type="range" id="p200" step="0.01"></label>
-      <label>Prix du 85 g en proximité <span class="val" id="v_p85"></span><input type="range" id="p85" step="0.01"></label>
+      <label>Prix du <span class="g200"></span> <span class="val" id="v_p200"></span><input type="range" id="p200" step="0.01"></label>
       <p class="note" id="noteP85" style="margin-top:-8px"></p>
       <h3>Partage de la valeur</h3>
       <label>Marge du distributeur (% du prix HT) <span class="val" id="v_md"></span><input type="range" id="md" min="15" max="45" step="1"></label>
@@ -41,18 +36,18 @@
       <h3>Lancement et demande</h3>
       <label>Coûts fixes du lancement (€) <span class="val" id="v_cf"></span><input type="range" id="cf" min="20000" max="500000" step="5000"></label>
       <label>Cannibalisation (85 g perdus par <span class="g200"></span> vendu) <span class="val" id="v_can"></span><input type="range" id="can" min="0" max="2" step="0.1"></label>
-      <label>Volume de référence (<span class="g200"></span> vendus par an quand <span class="pref"></span> le choisissent) <span class="val" id="v_vol"></span><input type="range" id="vol" min="20000" max="1000000" step="10000"></label>
+      <label>Volume de référence (<span class="g200"></span> vendus par an si <span class="pref"></span> le choisissaient) <span class="val" id="v_vol"></span><input type="range" id="vol" min="20000" max="1000000" step="10000"></label>
       <p class="note"><a href="#" id="reset">Revenir aux valeurs de config.js</a></p>
     </div>
     <div>
       <div class="card">
-        <h3>Seuil de rentabilité</h3>
+        <h3>c) Seuil de rentabilité</h3>
         <div class="big" id="seuil"></div>
         <div id="seuilTxt" class="note"></div>
       </div>
       <div class="grid g2">
         <div class="card kpi"><div class="v" id="kPartMin"></div><div class="l">Part minimale de rentabilité</div></div>
-        <div class="card kpi"><div class="v" id="kPart"></div><div class="l">Part mesurée / attendue</div></div>
+        <div class="card kpi"><div class="v" id="kPart"></div><div class="l">Part attendue (mesurée)</div></div>
       </div>
       <div class="card kpi"><div class="v" id="res"></div><div class="l" id="resTxt"></div></div>
       <div class="card">
@@ -63,32 +58,26 @@
   </div>
 
   <div class="card scroll">
-    <h2>b) Le calcul, étape par étape</h2>
+    <h2>b) Le calcul de la marge, étape par étape</h2>
     <div id="etapes"></div>
     <table id="detail"></table>
   </div>
 
-  <div class="card">
-    <h2>c) Le graphique clé : la demande passe-t-elle la ligne ?</h2>
-    <div class="chart"><canvas id="cCle"></canvas></div>
-    <p class="note" id="noteCle"></p>
-  </div>
-
   <div class="card scroll">
-    <h2>d) Stress test sur la demande (proximité)</h2>
-    <p>Et si nous nous trompons ? On refait le calcul du circuit de proximité en dégradant une hypothèse à la fois, puis plusieurs ensemble.</p>
+    <h2>d) Stress test</h2>
+    <p>Et si nous nous trompons ? On refait le calcul en dégradant une hypothèse à la fois, puis plusieurs ensemble.</p>
     <table id="tStress"></table>
     <p id="stressTxt" style="margin-top:12px"></p>
   </div>
 
   <div class="card">
-    <h2>e) Et si Vico voulait la grande surface ?</h2>
-    <div id="gsAlt"></div>
+    <h2>e) Et à <span class="p399"></span> ?</h2>
+    <div id="alt"></div>
   </div>
 
   <div class="card scroll" id="hypotheses">
     <h2>f) Hypothèses : valeur, pourquoi, source</h2>
-    <p class="note"><span class="tag t-constate">Constaté</span> chiffre relevé ou mesuré, avec lien. <span class="tag t-estime">Estimé</span> hypothèse de travail, à remplacer par une donnée sourcée. <span class="tag t-ref">Donné</span> point de départ du dossier.</p>
+    <p class="note"><span class="tag t-constate">Constaté</span> chiffre relevé ou mesuré, avec lien. <span class="tag t-estime">Estimé</span> hypothèse de travail, à remplacer par une donnée sourcée.</p>
     <table id="tHyp"></table>
   </div>
 
@@ -99,62 +88,57 @@
 </div>
 <script>
 const $ = id => document.getElementById(id);
+document.querySelectorAll('.d').forEach(e => e.textContent = DATA.date);
 document.querySelectorAll('.g200').forEach(e => e.textContent = G200 + ' g');
 document.querySelectorAll('.pref').forEach(e => e.textContent = pcta(CONFIG.PART_REF));
-$('circuit').innerHTML = Object.values(CIRCUITS).map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+const P399 = Math.ceil(T_CHIPS.prix * 10) / 10 - 0.01;     // prix psychologique tiré de la tendance « chips »
+document.querySelectorAll('.p399').forEach(e => e.textContent = eur(P399));
 
-/* Curseurs : [id, clé de CONFIG, facteur d'affichage, min, max] */
-const SL = [['p200', 'PRIX_CONNU_200', 1], ['p85', 'PRIX_85_PROXIMITE', 1], ['md', 'MARGE_DISTRIB', 100], ['ck', 'FABRICATION_KG', 1], ['e200', 'EMB_200', 1],
+/* Curseurs : [id, clé de CONFIG, facteur d'affichage] */
+const SL = [['p200', 'PRIX_200', 1], ['md', 'MARGE_DISTRIB', 100], ['ck', 'FABRICATION_KG', 1], ['e200', 'EMB_200', 1],
   ['e85', 'EMB_85', 1], ['cv', 'AUTRES_FRAIS', 100], ['cf', 'COUTS_FIXES', 1], ['can', 'CANNIBALISATION', 1], ['vol', 'VOLUME_REF', 1]];
-$('p200').min = Math.min(2.99, CONFIG.PRIX_CONNU_200); $('p200').max = Math.max(6.99, CONFIG.PRIX_CONNU_200);
-$('p85').min = Math.min(1.49, CONFIG.PRIX_85_PROXIMITE); $('p85').max = Math.max(3.49, CONFIG.PRIX_85_PROXIMITE);
+$('p200').min = 2.49; $('p200').max = Math.max(4.99, Math.ceil(PLAFOND * 10) / 10);
 function reset() { SL.forEach(([id, k, f]) => { const el = $(id); el.min = Math.min(+el.min, CONFIG[k] * f); el.max = Math.max(+el.max, CONFIG[k] * f); el.value = CONFIG[k] * f; }); }
 reset();
 $('reset').onclick = e => { e.preventDefault(); reset(); calc(); };
 
 const sg = x => (x >= 0 ? '+' : '−') + nb(Math.abs(x)) + ' €';
 const cls = x => x >= 0 ? 'ok' : 'ko';
-let chRes, chCle;
-
-function lireH() {
-  const h = { ...CONFIG };
-  SL.forEach(([id, k, f]) => h[k] = +$(id).value / f);
-  return h;
-}
+let chRes;
+function lireH() { const h = { ...CONFIG }; SL.forEach(([id, k, f]) => h[k] = +$(id).value / f); return h; }
 
 function calc() {
-  const h = lireH(), circuit = $('circuit').value;
-  const r = modele(h, circuit), rP = modele(h, 'proximite'), rG = modele(h, 'gs');
-  // valeurs des curseurs
-  $('v_p200').textContent = eur(h.PRIX_CONNU_200); $('v_p85').textContent = eur(h.PRIX_85_PROXIMITE);
+  const h = lireH(), r = modele(h), PL = plancher(h);
+  $('v_p200').textContent = eur(h.PRIX_200);
   $('v_md').textContent = fmt(h.MARGE_DISTRIB * 100, 0) + ' %'; $('v_ck').textContent = eur(h.FABRICATION_KG) + '/kg';
   $('v_e200').textContent = eur(h.EMB_200); $('v_e85').textContent = eur(h.EMB_85); $('v_cv').textContent = fmt(h.AUTRES_FRAIS * 100, 0) + ' %';
   $('v_cf').textContent = nb(h.COUTS_FIXES) + ' €'; $('v_can').textContent = fmt(h.CANNIBALISATION, 1); $('v_vol').textContent = nb(h.VOLUME_REF);
-  $('p85').disabled = circuit !== 'proximite';
-  $('noteP85').innerHTML = circuit === 'proximite' ? `Prix de proximité <span class="a-sourcer">[source à ajouter]</span>.` : `En grande surface, le 85 g est fixé au prix moyen du ${L_RELEVE()} : ${eur(PRIX85_GS)}.`;
+  $('noteP85').innerHTML = `Prix du 85 g : ${eur(PRIX85)}, moyenne du ${L_RELEVE()}. Écart au kilo du ${G200} g : <b>${pct(r.ecart, 1)}</b>.`;
 
-  // a) réponses
-  $('question').textContent = `À ${eur(h.PRIX_CONNU_200)}, la demande pour un format familial de ${G200} g des chips de lentilles Vico suffit-elle à couvrir son coût de lancement, et dans quel circuit ?`;
-  const rep = (x, nom) => `<li><b>${nom}</b> (85 g à ${eur(x.prix85)}, ${G200} g ${pct(x.ecart)} au kilo) : ${x.borneHaute ? 'au mieux ' : ''}${pcta(x.part)} des acheteurs choisissent le ${G200} g, il en faut ${pcta(x.partMin, 1)}. <span class="${cls(x.resultat)}"><b>${x.part > x.partMin ? 'Oui, la demande couvre le coût' : 'Non, la demande ne couvre pas le coût'}</b> (résultat ${x.borneHaute ? 'au mieux ' : ''}${sg(x.resultat)} sur un an).</span></li>`;
-  $('reponses').innerHTML = rep(rP, 'Proximité') + rep(rG, 'Grande surface');
+  // a) trois prix
+  $('troisPrix').innerHTML = [
+    [eur(PL.prix), 'Plancher (coûts)', `Marge nulle sur chaque ${G200} g : (fabrication ${eur(h.FABRICATION_KG * G200 / 1000)} + emballage ${eur(h.EMB_200)}) ÷ (1 − ${fmt(h.AUTRES_FRAIS, 2)}) = ${eur(PL.v)} à recevoir, ÷ (1 − ${fmt(h.MARGE_DISTRIB, 2)}) × ${fmt(1 + h.TVA, 3)} = ${eur(PL.prix)} en magasin. Coûts estimés.`, 'ko'],
+    [eur(h.PRIX_200), 'Prix retenu', `Tendance des concurrents (${eur(T_TOUS.prix)}, <a href="format-familial.html">Le prix du ${G200} g</a>) et écart de ${pct(ecArr(r.ecart))} au kilo qui fait choisir le ${G200} g (<a href="client.html">questionnaire</a>).`, 'ok'],
+    [eur(PLAFOND), 'Plafond (même prix au kilo)', `${fmt(KG85)} €/kg × ${fmt(G200 / 1000, 1)} kg (${L_RELEVE()}). Au-delà, le ${G200} g serait plus cher au kilo que le 85 g : seuls ${pcta(partArr(VERSIONS.find(v => v.id === 'A')))} le choisissent à prix au kilo égal.`, '']
+  ].map(([v, l, t, c]) => `<div class="card kpi" style="box-shadow:none;border:1px solid var(--line)"><div class="v ${c}">${v}</div><div class="l"><b>${l}</b></div><div class="s">${t}</div></div>`).join('');
 
-  // seuil et résultat du circuit choisi
+  // seuil
   if (r.gain <= 0) {
     $('seuil').innerHTML = '<span class="ko">Jamais rentable</span>';
     $('seuilTxt').textContent = `Avec ces hypothèses, chaque ${G200} g vendu fait perdre plus de marge (85 g non vendus) qu'il n'en rapporte.`;
   } else {
-    $('seuil').textContent = nb(r.seuil) + ' sachets de ' + G200 + ' g';
-    $('seuilTxt').innerHTML = `${nb(h.COUTS_FIXES)} € de coûts fixes ÷ ${eur(r.gain)} de marge gagnée par ${G200} g. Soit ${nb(r.seuil * G200 / 1000)} kg de chips et ${nb(r.seuil * h.PRIX_CONNU_200)} € de chiffre d'affaires en magasin.`;
+    $('seuil').textContent = nb(r.seuil) + ' sachets de ' + G200 + ' g par an';
+    $('seuilTxt').innerHTML = `${nb(h.COUTS_FIXES)} € de coûts fixes ÷ ${eur(r.gain)} de marge gagnée par ${G200} g. Soit ${nb(r.seuil * G200 / 1000)} kg de chips et ${nb(r.seuil * h.PRIX_200)} € de chiffre d'affaires en magasin.`;
   }
+  const mes = r.pm.exacte ? `version ${r.pm.version.id}` : 'écart non mesuré';
   $('kPartMin').textContent = isFinite(r.partMin) ? pcta(r.partMin, 1) : '–';
-  $('kPart').innerHTML = `<span class="${r.part > r.partMin ? 'ok' : 'ko'}">${r.borneHaute ? '≤ ' : ''}${pcta(r.part)}</span>`;
-  $('res').innerHTML = `<span class="${cls(r.resultat)}">${r.borneHaute ? '≤ ' : ''}${sg(r.resultat)}</span>`;
-  $('resTxt').textContent = `Résultat du lancement sur un an : ${nb(r.volume)} sachets de ${G200} g attendus${r.borneHaute ? ' (au mieux)' : ''} × ${eur(r.gain)} − ${nb(h.COUTS_FIXES)} €`;
+  $('kPart').innerHTML = `<span class="${r.part > r.partMin ? 'ok' : 'ko'}">${pcta(r.part)}</span> <span class="note">(${mes})</span>`;
+  $('res').innerHTML = `<span class="${cls(r.resultat)}">${sg(r.resultat)}</span>`;
+  $('resTxt').textContent = `Résultat du lancement sur un an : ${nb(r.volume)} sachets de ${G200} g attendus × ${eur(r.gain)} − ${nb(h.COUTS_FIXES)} €`;
 
   // b) étapes
   const a = r.a, b = r.b;
-  $('etapes').innerHTML = `<p>Circuit : <b>${CIRCUITS[circuit].label}</b>.</p>
-<div class="calc">1. Prix payé à Vico   v = prix ÷ (1 + TVA) × (1 − marge distributeur)
+  $('etapes').innerHTML = `<div class="calc">1. Prix payé à Vico   v = prix ÷ (1 + TVA) × (1 − marge distributeur)
    ${G200} g : ${fmt(a.prix)} ÷ ${fmt(1 + h.TVA, 3)} × ${fmt(1 - h.MARGE_DISTRIB, 2)} = ${eur(a.v)}
    85 g  : ${fmt(b.prix)} ÷ ${fmt(1 + h.TVA, 3)} × ${fmt(1 - h.MARGE_DISTRIB, 2)} = ${eur(b.v)}
 2. Marge par paquet   v − fabrication × poids − emballage − autres frais × v
@@ -165,10 +149,10 @@ function calc() {
 4. Seuil = coûts fixes ÷ marge gagnée = ${nb(h.COUTS_FIXES)} ÷ ${fmt(r.gain)} = ${isFinite(r.seuil) ? nb(r.seuil) + ' sachets' : 'jamais'}
 5. Part minimale = seuil ÷ volume de référence × part de référence
    ${nb(r.seuil)} ÷ ${nb(h.VOLUME_REF)} × ${fmt(h.PART_REF, 2)} = ${pcta(r.partMin, 1)}
-6. Part attendue : écart au kilo ${pct(r.ecart, 1)} → ${r.borneHaute ? 'plus cher au kilo que toutes les versions testées : part de la version A, ' + pcta(r.part) + ' (borne HAUTE)' : 'version ' + r.pm.version.id + ' du questionnaire, ' + pcta(r.part)}
+6. Part attendue : écart au kilo ${pct(r.ecart, 1)} → ${r.pm.exacte ? 'version ' + r.pm.version.id + ' du questionnaire, ' + pcta(r.part) : 'écart non testé : on retient la part de la version ' + r.pm.version.id + ', ' + pcta(r.part)}
 7. Volume attendu = ${nb(h.VOLUME_REF)} × ${fmt(r.part, 2)} ÷ ${fmt(h.PART_REF, 2)} = ${nb(r.volume)} sachets
 8. Résultat = ${nb(r.volume)} × ${fmt(r.gain)} − ${nb(h.COUTS_FIXES)} = ${sg(r.resultat)}</div>
-<p class="note">Règle de l'étape 6 : on ne retient que des parts mesurées, sans extrapoler entre les versions testées (${VERSIONS.map(v => `${v.id} : ${pct(Math.round(v.ecart * 100) / 100)} → ${pcta(partArr(v))}`).join(' ; ')}, <a href="client.html">questionnaire</a>). Un circuit prend la part de la version la plus avantageuse qu'il égale ou dépasse ; plus cher au kilo que A, il prend la part de A comme borne haute.</p>`;
+<p class="note">Prix du 85 g : ${eur(PRIX85)}, moyenne du ${L_RELEVE()} arrondie au centime. Parts : <a href="client.html">questionnaire</a> (${VERSIONS.map(v => `${v.id} : ${pct(ecArr(v.ecart))} → ${pcta(partArr(v))}`).join(' ; ')}).</p>`;
   $('detail').innerHTML = `<tr><th></th><th class="n">${G200} g</th><th class="n">85 g</th></tr>` +
     [['Prix en magasin (TTC)', a.prix, b.prix], ['Prix hors taxes', a.ht, b.ht], ['Prix payé à Vico (après marge distributeur)', a.v, b.v],
      ['– Fabrication', a.fab, b.fab], ['– Emballage', a.emb, b.emb], ['– Autres frais', a.autres, b.autres], ['= Marge de Vico par paquet', a.m, b.m]]
@@ -176,7 +160,7 @@ function calc() {
     `<tr><td>Marge perdue sur les 85 g cannibalisés (${fmt(h.CANNIBALISATION, 1)} sachet)</td><td class="n">– ${eur(h.CANNIBALISATION * b.m)}</td><td></td></tr>` +
     `<tr class="vico"><td>Marge gagnée par ${G200} g</td><td class="n">${eur(r.gain)}</td><td></td></tr>`;
 
-  // graphique du résultat
+  // c) courbe du résultat
   const max = Math.max(r.volume * 1.5, isFinite(r.seuil) ? r.seuil * 1.5 : r.volume);
   const pts = Array.from({ length: 21 }, (_, i) => max * i / 20);
   chRes?.destroy();
@@ -185,71 +169,52 @@ function calc() {
     options: { animation: false, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + nb(c.raw) + ' €' } } },
       scales: { x: { title: { display: true, text: `Sachets de ${G200} g vendus` }, ticks: { maxTicksLimit: 6 } }, y: { title: { display: true, text: 'Résultat (€)' } } } } });
 
-  // c) graphique clé
-  const xs = [rP.ecart, rG.ecart, ...VERSIONS.map(v => v.ecart)].map(x => 100 * x);
-  const x0 = Math.floor(Math.min(...xs) / 5) * 5 - 5, x1 = Math.ceil(Math.max(...xs) / 5) * 5 + 5;
-  const ligne = (y, lab, c) => ({ label: lab, data: [{ x: x0, y: 100 * y }, { x: x1, y: 100 * y }], showLine: true, borderColor: c, borderDash: [6, 4], borderWidth: 2, pointRadius: 0 });
-  chCle?.destroy();
-  chCle = new Chart($('cCle'), { type: 'scatter',
-    data: { datasets: [
-      ligne(rP.partMin, `Part minimale, proximité (${pcta(rP.partMin, 1)})`, '#2e7d32'),
-      ligne(rG.partMin, `Part minimale, grande surface (${pcta(rG.partMin, 1)})`, '#c62828'),
-      { label: 'Demande mesurée (A, B, C)', data: [...VERSIONS].sort((p, q) => q.ecart - p.ecart).map(v => ({ x: 100 * v.ecart, y: 100 * v.part, t: 'Version ' + v.id })), showLine: true, borderColor: '#9e9e9e', backgroundColor: '#9e9e9e', pointRadius: 4 },
-      { label: `Proximité : part ${rP.borneHaute ? 'au mieux ' : ''}${pcta(rP.part)}`, data: [{ x: 100 * rP.ecart, y: 100 * rP.part, t: 'Proximité' }], backgroundColor: '#2e7d32', pointRadius: 11, pointStyle: 'rectRot' },
-      { label: `Grande surface : part ${rG.borneHaute ? 'au mieux ' : ''}${pcta(rG.part)}`, data: [{ x: 100 * rG.ecart, y: 100 * rG.part, t: 'Grande surface' + (rG.borneHaute ? ' (borne haute)' : '') }], backgroundColor: '#c62828', pointRadius: 11, pointStyle: rG.borneHaute ? 'triangle' : 'rectRot', rotation: rG.borneHaute ? 180 : 0 }
-    ] },
-    options: { animation: false, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: c => ` ${c.raw.t || c.dataset.label} : ${fmt(c.raw.y, 1)} %` } } },
-      scales: { x: { reverse: true, min: x0, max: x1, title: { display: true, text: `Écart de prix au kilo du ${G200} g face au 85 g (%)` } },
-        y: { min: 0, max: 70, title: { display: true, text: `Part qui choisit le ${G200} g (%)` } } } } });
-  $('noteCle').innerHTML = `Chaque circuit doit dépasser <b>sa</b> ligne (même couleur) : la part minimale diffère car la marge perdue sur le 85 g cannibalisé n'est pas la même. Proximité : ${pcta(rP.part)} contre ${pcta(rP.partMin, 1)} → <span class="${cls(rP.part - rP.partMin)}">${rP.part > rP.partMin ? 'au-dessus' : 'en dessous'}</span>. Grande surface : ${rG.borneHaute ? 'au mieux ' : ''}${pcta(rG.part)} contre ${pcta(rG.partMin, 1)} → <span class="${cls(rG.part - rG.partMin)}">${rG.part > rG.partMin ? 'au-dessus' : 'en dessous'}</span>${rG.borneHaute ? ' (triangle pointe en bas : la vraie part est sans doute plus basse)' : ''}. Parts : <a href="client.html">questionnaire</a> ; lignes : calcul ci-dessus.`;
-
   // d) stress test
-  const st = stressTest(h, 'proximite');
+  const st = stressTest(h);
   $('tStress').innerHTML = `<tr><th>Scénario</th><th class="n">Marge gagnée</th><th class="n">Seuil</th><th class="n">Part minimale</th><th class="n">Volume</th><th class="n">Résultat</th></tr>` +
     st.map(({ nom, r: x }, i) => `<tr${i === 0 ? ' class="vico"' : ''}><td>${nom}</td><td class="n">${eur(x.gain)}</td><td class="n">${isFinite(x.seuil) ? nb(x.seuil) : '–'}</td><td class="n">${pcta(x.partMin, 1)}</td><td class="n">${nb(x.volume)}</td><td class="n ${cls(x.resultat)}"><b>${sg(x.resultat)}</b></td></tr>`).join('');
-  const chute = 1 - rP.seuil / rP.volume;
-  const canMax = (rP.a.m - h.COUTS_FIXES / rP.volume) / rP.b.m;
-  $('stressTxt').innerHTML = `Le lancement reste rentable tant que plus de <b>${pcta(rP.partMin, 1)}</b> des acheteurs choisissent le ${G200} g (nous en mesurons ${pcta(rP.part)}) : il lâche si la demande chute d'environ <b>${fmt(Math.round(chute * 20) * 5, 0)} %</b> (exactement ${pcta(chute, 1)}) ou si chaque ${G200} g remplace ${Math.abs(canMax - 1) < 0.05 ? 'un 85 g entier' : fmt(canMax, 1) + ' sachet de 85 g'} (cannibalisation limite : ${fmt(canMax, 2)}). L'hypothèse la plus fragile : <b>le volume de référence</b> (${nb(h.VOLUME_REF)} sachets par an), non sourcé, auquel le résultat est directement proportionnel : c'est lui que le test en magasin doit vérifier.`;
+  const chute = 1 - r.seuil / r.volume;
+  $('stressTxt').innerHTML = chute > 0
+    ? `Le lancement lâche si les ventes sont inférieures de <b>${pcta(chute, 1)}</b> aux prévisions (${nb(r.seuil)} au lieu de ${nb(r.volume)} sachets). L'hypothèse la plus fragile est <b>le volume</b> : le volume de référence (${nb(h.VOLUME_REF)} sachets par an) n'est pas sourcé, et le résultat lui est directement proportionnel.`
+    : `Avec ces hypothèses, les ventes attendues (${nb(r.volume)}) sont déjà sous le seuil (${nb(r.seuil)}) : il faudrait <b>${pcta(-chute, 1)}</b> de ventes en plus. L'hypothèse la plus fragile est <b>le volume</b>.`;
 
-  // e) grande surface à prix ajusté
-  const vB = VERSIONS.find(v => v.id === 'B'), ecB = Math.round(vB.ecart * 100) / 100;
-  const pGS = PRIX85_GS * (1 + ecB) * G200 / G85;
-  const g = modele(h, 'gs', { prix200: pGS });
-  $('gsAlt').innerHTML = `<p>Pour retrouver en grande surface l'écart de <b>${pct(ecB)}</b> au kilo qui déclenche la demande (version B), le ${G200} g devrait coûter :</p>
-<div class="calc">prix moyen du 85 g × (1 − ${fmt(-ecB, 2)}) × ${G200} ÷ ${G85} = ${fmt(PRIX85_GS)} × ${fmt(1 + ecB, 2)} × ${fmt(G200 / G85, 3)} = ${eur(pGS)}</div>
-<p>À ce prix, ${pcta(g.part)} des acheteurs choisiraient le ${G200} g (version ${g.pm.version.id}), mais la marge gagnée tombe à <b>${eur(g.gain)}</b> par sachet, le seuil monte à <b>${nb(g.seuil)}</b> sachets (part minimale ${pcta(g.partMin, 1)}) et le résultat serait de <b class="${cls(g.resultat)}">${sg(g.resultat)}</b> : ${Math.abs(g.resultat) < 0.05 * h.COUTS_FIXES ? 'tout juste à l\'équilibre' : g.resultat > 0 ? 'rentable' : 'en perte'}. Ce serait surtout <b>changer de prix</b>, donc sortir du prix donné de ${eur(h.PRIX_CONNU_200)} : hors du cadre de notre question.</p>`;
+  // e) alternative
+  const GG399 = RESULTATS.gaborGranger.find(g => Math.abs(g.prix - P399) < 0.005);
+  const q = modele(h, { prix200: P399 });
+  $('alt').innerHTML = `<p>${eur(P399)} correspond à la tendance des seules chips (${eur(T_CHIPS.prix)}, ${pct(T_CHIPS.baisse, 1)} au kilo, <a href="format-familial.html">Le prix du ${G200} g</a>). Le ${G200} g y serait à ${pct(q.ecart, 1)} au kilo face au 85 g.</p>
+<div class="calc">marge ${G200} g = ${eur(q.a.m)} ; marge gagnée = ${fmt(q.a.m)} − ${fmt(h.CANNIBALISATION, 1)} × ${fmt(q.b.m)} = ${eur(q.gain)}
+seuil = ${nb(h.COUTS_FIXES)} ÷ ${fmt(q.gain)} = ${nb(q.seuil)} sachets ; part minimale = ${pcta(q.partMin, 1)}</div>
+<p><b>Plus de marge</b> (${eur(q.gain)} au lieu de ${eur(r.gain)}), donc un seuil plus bas. Mais la demande à ${pct(ecArr(q.ecart))} au kilo <b>n'a pas été mesurée</b> : notre questionnaire n'a testé que ${VERSIONS.map(v => pct(ecArr(v.ecart))).join(', ')}. À prix au kilo égal, seuls ${pcta(partArr(VERSIONS.find(v => v.id === 'A')))} choisissent le ${G200} g, et le ${G200} g seul n'est acheté que par ${pcta(GG399?.part)} des répondants à ${eur(GG399?.prix)} (Gabor-Granger, <a href="client.html">questionnaire</a>). Le gain de marge ne compense pas ce risque.</p>`;
 }
-['circuit', ...SL.map(s => s[0])].forEach(i => $(i).oninput = calc);
+SL.forEach(s => $(s[0]).oninput = calc);
 calc();
 
 /* f) Hypothèses (valeurs de config.js) */
-const K = CONFIG;
+const K = CONFIG, R0 = modele();
 const H = [
-  ['Prix du format familial', eur(K.PRIX_CONNU_200), 'Donné : c\'est le point de départ du dossier. Nous étudions la demande à ce prix, sans le modifier.', 'Prix donné ; testé tel quel (version C) dans le <a href="client.html">questionnaire</a>', 'd'],
-  ['Prix du 85 g en proximité', eur(K.PRIX_85_PROXIMITE), 'Prix d\'un magasin de proximité, nettement au-dessus de la grande surface ; c\'est le prix affiché dans le questionnaire.', `<span class="a-sourcer">[source à ajouter]</span> (relevé en magasin de proximité, avec date)`, 'e'],
-  ['Prix du 85 g en grande surface', eur(PRIX85_GS), `Moyenne des ${lignes({ p: VICO }).length} prix au kilo relevés × 0,085 kg.`, L_RELEVE(), 'c'],
+  ['Prix du 200 g', eur(K.PRIX_200), `Tendance des concurrents (${eur(T_TOUS.prix)}) arrondie à un prix psychologique ; écart de ${pct(ecArr(R0.ecart))} au kilo, celui de la version B.`, `<a href="format-familial.html">Le prix du ${G200} g</a> (${L_RELEVE()}) et <a href="client.html">questionnaire</a>`, 'c'],
+  ['Prix du 85 g', eur(PRIX85), `Moyenne des ${V85.length} prix relevés, arrondie au centime.`, L_RELEVE(), 'c'],
   ['TVA', fmt(K.TVA * 100, 1) + ' %', 'Taux réduit applicable aux produits alimentaires.', '<span class="a-sourcer">[source à ajouter]</span> piste : Code général des impôts, article 278-0 bis', 'e'],
-  ['Marge du distributeur', fmt(K.MARGE_DISTRIB * 100, 0) + ' %', 'Ordre de grandeur courant en épicerie salée ; testé à 35 % dans le stress test.', '<span class="a-sourcer">[source à ajouter]</span> pistes : Observatoire de la formation des prix et des marges des produits alimentaires (rapport annuel au Parlement), presse spécialisée LSA', 'e'],
-  ['Coût de fabrication', eur(K.FABRICATION_KG) + '/kg', 'Matières (farine de lentilles, huile, arômes), énergie et main-d\'œuvre ; testé à +15 %.', '<span class="a-sourcer">[source à ajouter]</span> pistes : Observatoire de la formation des prix et des marges, LSA, comptes d\'industriels comparables', 'e'],
+  ['Marge du distributeur', fmt(K.MARGE_DISTRIB * 100, 0) + ' %', 'Ordre de grandeur courant en épicerie salée ; testé à 35 % dans le stress test.', '<span class="a-sourcer">[source à ajouter]</span> pistes : Observatoire de la formation des prix et des marges des produits alimentaires (rapport annuel au Parlement), LSA', 'e'],
+  ['Coût de fabrication', eur(K.FABRICATION_KG) + '/kg', 'Matières (farine de lentilles, huile, arômes), énergie et main-d\'œuvre ; testé à +15 %.', '<span class="a-sourcer">[source à ajouter]</span> pistes : Observatoire de la formation des prix et des marges, LSA', 'e'],
   ['Emballage', `${eur(K.EMB_200)} (${G200} g) / ${eur(K.EMB_85)} (85 g)`, 'Le sachet plus grand coûte plus cher, mais pas proportionnellement au poids.', '<span class="a-sourcer">[source à ajouter]</span> piste : devis de fabricant d\'emballages souples', 'e'],
   ['Autres frais', fmt(K.AUTRES_FRAIS * 100, 0) + ' % du prix payé à Vico', 'Logistique, promotions.', '<span class="a-sourcer">[source à ajouter]</span> piste : LSA', 'e'],
-  ['Coûts fixes du lancement', nb(K.COUTS_FIXES) + ' €', 'Adaptation de la ligne de conditionnement, design du sachet, frais de référencement payés aux enseignes, communication.', '<span class="a-sourcer">[source à ajouter]</span> pistes : LSA (frais de référencement), entretien avec un industriel', 'e'],
+  ['Coûts fixes du lancement', nb(K.COUTS_FIXES) + ' €', 'Adaptation de la ligne de conditionnement, design du sachet, frais de référencement payés aux enseignes, communication.', '<span class="a-sourcer">[source à ajouter]</span> pistes : LSA (frais de référencement), Observatoire de la formation des prix et des marges', 'e'],
   ['Cannibalisation', fmt(K.CANNIBALISATION, 1) + ' sachet de 85 g', 'Valeur médiane entre 0 (le 200 g n\'attire que des nouveaux acheteurs) et 1 (chaque 200 g remplace un 85 g). Le <a href="client.html">questionnaire</a> mesure le choix entre les deux formats, pas ce qui serait acheté sans le 200 g : testé à 1 dans le stress test.', '<span class="a-sourcer">[source à ajouter]</span> piste : test en magasin', 'e'],
-  ['Volume de référence', nb(K.VOLUME_REF) + ' sachets de ' + G200 + ' g par an', `Ventes annuelles du ${G200} g quand ${pcta(K.PART_REF)} des acheteurs le choisissent. Hypothèse la plus fragile : le résultat lui est proportionnel.`, '<span class="a-sourcer">[source à ajouter]</span> pistes : ventes du 85 g (panels Circana/NielsenIQ cités par LSA), test en magasin', 'e'],
-  ['Part de référence', pcta(K.PART_REF), 'Part mesurée à notre prix (version C) : sert à convertir une part de choix en volume.', `<a href="client.html">Questionnaire</a>, ${RESULTATS.collecte.debut}–${RESULTATS.collecte.fin}`, 'c']
+  ['Volume de référence', nb(K.VOLUME_REF) + ' sachets de ' + G200 + ' g par an', `Ventes annuelles du ${G200} g si ${pcta(K.PART_REF)} des acheteurs le choisissaient. Hypothèse la plus fragile : le résultat lui est proportionnel.`, '<span class="a-sourcer">[source à ajouter]</span> pistes : LSA (ventes de la catégorie), Observatoire de la formation des prix et des marges, test en magasin', 'e'],
+  ['Part de référence', pcta(K.PART_REF), 'Part qui choisit le 200 g dans la meilleure version mesurée (C) : sert à convertir une part de choix en volume.', `<a href="client.html">Questionnaire</a>, ${RESULTATS.collecte.debut}–${RESULTATS.collecte.fin}`, 'c']
 ];
 $('tHyp').innerHTML = `<tr><th>Hypothèse</th><th>Valeur</th><th>Pourquoi</th><th>Source</th></tr>` +
-  H.map(([n, v, p, s, t]) => `<tr><td><b>${n}</b><br><span class="tag ${({ c: 't-constate', e: 't-estime', d: 't-ref' })[t]}">${({ c: 'Constaté', e: 'Estimé', d: 'Donné' })[t]}</span></td><td>${v}</td><td>${p}</td><td>${s}</td></tr>`).join('');
+  H.map(([n, v, p, s, t]) => `<tr><td><b>${n}</b><br><span class="tag ${t === 'c' ? 't-constate' : 't-estime'}">${t === 'c' ? 'Constaté' : 'Estimé'}</span></td><td>${v}</td><td>${p}</td><td>${s}</td></tr>`).join('');
 
-/* g) Recommandation (valeurs par défaut de config.js) */
-const P0 = modele(CONFIG, 'proximite'), S0 = modele(CONFIG, 'gs'), Pr = RESULTATS.profils;
+/* g) Recommandation (valeurs de config.js) */
+const Pr = RESULTATS.profils, vA = VERSIONS.find(v => v.id === 'A');
 $('reco').innerHTML = [
-  `<b>Lancer le ${G200} g à ${eur(K.PRIX_CONNU_200)} dans les circuits où le 85 g se vend autour de ${eur(K.PRIX_85_PROXIMITE)} (proximité)</b> : il y est ${pcta(P0.ecart)} moins cher au kilo, ${pcta(P0.part)} des acheteurs le choisissent pour ${pcta(P0.partMin, 1)} nécessaires (résultat ${sg(P0.resultat)}).`,
-  `<b>Ne pas le lancer à ${eur(K.PRIX_CONNU_200)} en grande surface tant que le 85 g y est à environ ${eur(PRIX85_GS)}</b> : il y serait ${pct(S0.ecart)} au kilo et la demande (au mieux ${pcta(S0.part)}) ne couvrirait pas le seuil (${pcta(S0.partMin, 1)}).`,
+  `<b>Vendre le ${G200} g à ${eur(K.PRIX_200)} en grande surface</b> (${pct(ecArr(R0.ecart))} au kilo face au 85 g à ${eur(PRIX85)}). Ne jamais le laisser au même prix au kilo que le 85 g (seuls ${pcta(partArr(vA))} le choisiraient), et <b>surveiller les promotions sur le 85 g</b> : une promotion sur le petit sachet efface l'écart.`,
   `<b>Afficher le prix au kilo en grand</b> : ${pcta(Pr.economieVue.oui)} de ceux qui voient l'économie choisissent le ${G200} g, contre ${pcta(Pr.economieVue.non)} ; et ${fmt(Pr.economieVue.nePasVoir * 3, 0)} client sur 3 ne la voit pas (<a href="client.html">questionnaire</a>).`,
   `<b>Viser les familles</b> (${pcta(Pr.enfants.oui)} des foyers avec enfants choisissent le ${G200} g, contre ${pcta(Pr.enfants.non)}) et <b>placer le ${G200} g à côté des grands paquets de chips</b> (${pcta(Pr.grandsFormats.oui)} des habitués des grands formats le choisissent).`,
   `<b>Garder le 85 g</b> : les étudiants le préfèrent (${pcta(Pr.etudiants.oui)} seulement choisissent le ${G200} g) et ${pcta(Pr.dejaAchete.jamaisAchete)} des répondants n'ont jamais acheté de chips de lentilles : le petit sachet sert à faire découvrir le produit.`,
-  `<b>Faire un test en magasin</b> dans quelques points de vente de proximité pour mesurer la vraie demande (et le volume de référence) avant de généraliser : nos chiffres sont des intentions déclarées.`
+  `<b>Faire d'abord un test en magasin</b> : à ${eur(K.PRIX_200)}, la rentabilité tient à ${fmt(Math.ceil((1 - R0.seuil / R0.volume) * 100), 0)} % près (ventes attendues ${nb(R0.volume)}, seuil ${nb(R0.seuil)}), sur des intentions déclarées et un volume de référence non sourcé.`
 ].map(x => `<li>${x}</li>`).join('');
 </script>
 </body>
