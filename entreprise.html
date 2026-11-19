@@ -46,7 +46,7 @@
       <ul id="lecture"></ul>
     </div>
     <div class="card problem">
-      <h2>Ce que ça veut dire pour notre question</h2>
+      <h2>Ce que ça veut dire pour le prix</h2>
       <p id="pourNous"></p>
     </div>
   </div>
@@ -98,7 +98,10 @@ document.getElementById('lecture').innerHTML = [
   `<b>Solide</b> : les fonds propres financent ${fmt(R.af[last] * 100, 0)} % du bilan en ${A[last]} et la dette financière est quasi nulle. Les fonds propres baissent un peu (${COMPTES.fp[0]} → ${COMPTES.fp[last]} M€), sans doute des dividendes versés au groupe, ce qu'il faudrait vérifier dans les comptes.`
 ].map(x => `<li>${x}</li>`).join('');
 
-document.getElementById('pourNous').innerHTML = `Avec environ ${fmt(Math.round(mnMoy * 100), 0)} % de marge nette, Vico ne peut pas lancer un produit qui ne couvre pas ses coûts en espérant se rattraper ailleurs : un lancement à ${nb(CONFIG.COUTS_FIXES)} € de coûts fixes (hypothèse, voir <a href="decision.html#hypotheses">La décision</a>) qui ne serait pas couvert devrait être compensé par environ ${nb(CONFIG.COUTS_FIXES / mnMoy)} € de ventes supplémentaires (${nb(CONFIG.COUTS_FIXES)} ÷ ${fmt(mnMoy * 100, 1)} %). Le volume vendu de ${G200} g doit donc <b>dépasser le seuil de rentabilité</b> : c'est ce que nous vérifions, <a href="client.html">demande mesurée</a> à l'appui.`;
+const mnDer = R.mn[last], baisse10 = 0.10 * COMPTES.ca[last], rexApres = COMPTES.rex[last] - baisse10;
+document.getElementById('pourNous').innerHTML = `Sur 100 € de ventes, il reste environ <b>${fmt(mnDer * 100, 2)} €</b> de résultat net en ${A[last]} (${COMPTES.rn[last]} ÷ ${COMPTES.ca[last]}). ` +
+  `Une baisse de prix de 10 % à volume constant retire ${fmt(baisse10, 0)} M€ de chiffre d'affaires (10 % × ${COMPTES.ca[last]}) sans baisser les coûts : le résultat d'exploitation passerait de ${COMPTES.rex[last]} à <b>${fmt(rexApres, 0)} M€</b>, ${rexApres < 0 ? 'donc en perte' : 'encore positif'}. ` +
+  `Le ${G200} g doit donc être moins cher au kilo que le 85 g, mais <b>juste ce qu'il faut</b> : on vise l'écart qui déclenche la demande (<a href="client.html">mesuré dans notre questionnaire</a>), pas plus. Voir <a href="format-familial.html">Le prix du ${G200} g</a>.`;
 
 new Chart(document.getElementById('cComptes'), {
   data: { labels: A, datasets: [
