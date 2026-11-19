@@ -47,8 +47,8 @@
   <div class="card">
     <h2>Indices de prix</h2>
     <p>Pour comparer des magasins qui ne vendent pas exactement les mêmes produits, on calcule un <b>indice</b> : pour chaque produit trouvé, on divise son prix au kilo par la moyenne nationale de ce produit, puis on fait la moyenne. 100 = prix moyen ; 105 = 5 % plus cher que la moyenne.</p>
-    <h2>Prix cohérent du format familial (un repère, pas une recommandation)</h2>
-    <p>Pour chaque concurrent vendu en petit et en grand format dans le même magasin, on mesure l'écart de prix au kilo. On relie cet écart au rapport de poids entre les deux formats (plus le grand format est lourd, plus le kilo baisse), puis on applique la tendance au passage de 85 g à <span class="g200"></span> de Vico. Le prix du format familial étant donné, ce « prix cohérent » sert seulement à situer le prix donné face aux usages du marché (<a href="format-familial.html">Le prix face au marché</a>).</p>
+    <h2>Prix logique du format familial</h2>
+    <p>Pour chaque concurrent vendu en petit et en grand format dans le même magasin, on mesure l'écart de prix au kilo. On relie cet écart au rapport de poids entre les deux formats (baisse = b × ln(poids grand ÷ poids petit) : plus le grand format est lourd, plus le kilo baisse), puis on applique la tendance au passage de 85 g à <span class="g200"></span> de Vico, sur tous les produits puis sur les seules chips. Détail : <a href="format-familial.html">Le prix du <span class="g200"></span></a>.</p>
   </div>
 
   <div class="grid g2">
@@ -60,9 +60,10 @@
       <h2>Du questionnaire à la décision</h2>
       <ul>
         <li><b>Paramètres</b> : toutes les hypothèses sont dans <code>assets/config.js</code> ; tous les chiffres dérivés sont recalculés en JavaScript à partir du relevé (<code>assets/donnees.js</code>), du questionnaire (<code>assets/resultats.js</code>) et de ces paramètres. Changer le prix du <span class="g200"></span> dans config.js recalcule tout le site.</li>
-        <li><b>Part attendue par circuit</b> : on ne retient que des parts mesurées, sans extrapoler entre les versions testées. Un circuit prend la part de la version la plus avantageuse au kilo qu'il égale ou dépasse ; s'il est plus cher au kilo que la version A, il prend la part de A comme <b>borne haute</b>.</li>
+        <li><b>Prix du 85 g</b> : moyenne des prix du Vico 85 g dans le relevé, arrondie au centime, calculée à partir de <code>assets/donnees.js</code>.</li>
+        <li><b>Part attendue</b> : on ne retient que des parts mesurées, sans extrapoler entre les versions testées : l'écart au kilo du prix retenu prend la part de la version qu'il égale (au point près). Un écart non testé est signalé comme tel.</li>
         <li><b>Volume</b> : volume de référence × part attendue ÷ part de référence. Le volume de référence est une hypothèse non sourcée, testée dans le <a href="decision.html">stress test</a>.</li>
-        <li><b>Cannibalisation</b> : le questionnaire mesure le choix entre les deux formats, pas ce que les acheteurs feraient sans le <span class="g200"></span>. Elle reste une hypothèse (voir <a href="client.html">La demande</a> et le stress test de <a href="decision.html">La décision</a>).</li>
+        <li><b>Cannibalisation</b> : le questionnaire mesure le choix entre les deux formats, pas ce que les acheteurs feraient sans le <span class="g200"></span>. Elle reste une hypothèse (voir <a href="client.html">Le client</a> et le stress test de <a href="decision.html">La décision</a>).</li>
       </ul>
     </div>
   </div>
@@ -74,7 +75,7 @@
 
   <div class="card" id="a-sourcer">
     <h2>Toutes les sources à ajouter</h2>
-    <p class="note">Chaque marqueur <span class="a-sourcer">[source à ajouter]</span> du site, page par page. Chaque page en affiche aussi la liste en bas.</p>
+    <p class="note">Chaque marqueur <span class="a-sourcer">[source à ajouter]</span> du site, page par page. Chaque page en affiche aussi la liste en bas. Les autres pages (accueil, prix du 200 g, client) n'en contiennent pas.</p>
     <ul id="lASourcer"></ul>
   </div>
 </div>
@@ -82,19 +83,16 @@
 document.querySelectorAll('.g200').forEach(e => e.textContent = G200 + ' g');
 const R = RESULTATS, nQ = VERSIONS.reduce((s, v) => s + v.n, 0);
 document.getElementById('lQuest').innerHTML = [
-  `<b>Plateforme</b> : <a href="${R.url}" target="_blank" rel="noopener">questionnaire en ligne fait maison</a> (page HTML du site), réponses enregistrées dans le Google Sheet « Chips vico », onglet Réponses. Le questionnaire est clos depuis le ${R.collecte.fin} ; une archive est conservée dans le dossier <a href="questionnaire/">questionnaire/</a>.`,
+  `<b>Plateforme</b> : questionnaire en ligne fait maison (page HTML du site), réponses enregistrées dans le Google Sheet « Chips vico », onglet Réponses. Clos depuis le ${R.collecte.fin}.`,
   `<b>Dates</b> : collecte du ${R.collecte.debut} au ${R.collecte.fin}.`,
-  `<b>Tirage au sort</b> : chaque répondant voit une seule version du prix du ${G200} g (${VERSIONS.map(v => v.id + ' = ' + eur(v.prix200)).join(', ')}), à côté du 85 g affiché à ${eur(R.prix85)}, prix de proximité <span class="a-sourcer">[source à ajouter]</span>.`,
-  `<b>Réponses</b> : ${R.nettoyage.recues} reçues, <b>${nQ} analysées</b> après nettoyage (hors cible et réponses bâclées) : détail sur <a href="client.html">La demande</a>.`,
+  `<b>Tirage au sort</b> : chaque répondant voit une seule version du prix du ${G200} g, à côté du sachet de 85 g ; les trois versions diffèrent par l'écart de prix au kilo (${VERSIONS.map(v => v.id + ' : ' + pct(ecArr(v.ecart))).join(', ')}).`,
+  `<b>Deux versions</b> : la <a href="${R.urlOriginal}">version d'origine</a>, sur laquelle les réponses ont été collectées (85 g à ${eur(R.prix85)} ; 200 g à ${VERSIONS.map(v => eur(v.prix200)).join(', ')}), et une <a href="${R.urlRecale}">version recalée</a> sur les prix moyens de la grande surface (85 g à ${eur(R.prix85GS)} ; 200 g à ${VERSIONS.map(v => eur(v.prixGS)).join(', ')}), avec <b>les mêmes écarts au kilo</b> (${VERSIONS.map(v => v.id + ' : ' + pct(ecArr(v.ecart)) + ' / ' + pct(ecArr(v.ecartGS))).join(' ; ')}). La version recalée est en mode démonstration : elle n'enregistre rien.`,
+  `<b>Réponses</b> : ${R.nettoyage.recues} reçues, <b>${nQ} analysées</b> après nettoyage (hors cible et réponses bâclées) : détail sur <a href="client.html">Le client</a>.`,
   `<b>Questions</b> : choix entre les deux paquets, contrôle de perception du prix au kilo, Gabor-Granger sur le ${G200} g seul, profil (âge, foyer, habitudes d'achat).`
 ].map(x => `<li>${x}</li>`).join('');
 const AS = [
-  ['index.html', 'Accueil', ['Prix de proximité du 85 g (' + eur(CONFIG.PRIX_85_PROXIMITE) + '), dans le paragraphe « Ce qu’on retient ».']],
   ['entreprise.html', "L'entreprise", ['Chiffres des comptes (Xerfi) à vérifier sur les PDF officiels (Pappers), dans « Qui est derrière Vico ? ».', 'Même vérification, sous le tableau des comptes.', 'Curly et Bénénuts seraient aussi des marques du groupe (Limites).']],
-  ['format-familial.html', 'Le prix face au marché', ['Prix du 85 g en proximité, étape 4 du calcul.', 'Prix du 85 g en proximité, dans la conclusion.']],
-  ['client.html', 'La demande', ['Prix de proximité du 85 g affiché dans le questionnaire (méthode).']],
-  ['decision.html', 'La décision', ['Prix du 85 g en proximité (note sous le curseur).', 'Hypothèses : prix du 85 g en proximité, TVA à 5,5 %, marge du distributeur, coût de fabrication, emballage, autres frais, coûts fixes du lancement, cannibalisation, volume de référence.']],
-  ['methodologie.html#questionnaire', 'Méthodologie', ['Prix de proximité du 85 g (Le questionnaire).']]
+  ['decision.html#hypotheses', 'La décision', ['Hypothèses : TVA à 5,5 %, marge du distributeur, coût de fabrication, emballage, autres frais, coûts fixes du lancement, cannibalisation, volume de référence.']]
 ];
 document.getElementById('lASourcer').innerHTML = AS.map(([h, t, l]) => `<li><a href="${h.includes("#") ? h : h + "#a-sourcer-liste"}">${t}</a><ul>${l.map(x => `<li>${x}</li>`).join('')}</ul></li>`).join('');
 document.querySelectorAll('.d').forEach(e => e.textContent = DATA.date);
