@@ -82,6 +82,7 @@ img.zoom{cursor:zoom-in}
 </head>
 <body>
 <div class="wrap">
+  <div style="background:#fff3cd;border:1px solid #f0c36d;color:#7a5200;padding:10px 14px;border-radius:10px;font-weight:600;margin-bottom:14px">Questionnaire clos le 20/10/2026. Cette page est conservée en archive : les réponses ne sont plus enregistrées. Résultats : <a href="../client.html">La demande mesurée</a>.</div>
   <div class="test" id="testBanner">Mode test : les réponses sont enregistrées avec le statut « test », à écarter de l'analyse.</div>
   <div class="bar"><i id="prog"></i></div>
 
@@ -287,7 +288,8 @@ img.zoom{cursor:zoom-in}
 <script>
 /* ================= Réglages ================= */
 // Adresse du script Google Apps Script qui enregistre les réponses dans Google Sheets.
-const ENDPOINT = 'https://script.google.com/macros/s/AKfycbzz6syBDH2Jne6uU5eEMyrdvS8pq78MWjCMM709gKWsaAfuWMH4q-8GY1rikts7xJcY/exec';
+// Questionnaire clos le 20/10/2026 : archive, plus aucun envoi. Ancien point d'envoi : https://script.google.com/macros/s/AKfycbzz6syBDH2Jne6uU5eEMyrdvS8pq78MWjCMM709gKWsaAfuWMH4q-8GY1rikts7xJcY/exec
+const ENDPOINT = '';
 const IMAGE = 'paquet-B.jpg';                                   // photo officielle du sachet (vico.fr)
 const PRIX_85 = 2.69;                                           // identique dans les 3 versions (31,65 €/kg)
 const PRIX_200 = { A: 6.33, B: 5.49, C: 4.99 };                 // seule différence entre les versions
