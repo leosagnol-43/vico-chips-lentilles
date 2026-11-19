@@ -8,19 +8,22 @@
    s'en servent pour la part attendue.
    ===================================================================== */
 const RESULTATS = {
-  url: 'https://linasouilmi.github.io/vico-chips-lentilles/questionnaire/',
   collecte: { debut: '15/10/2026', fin: '20/10/2026' },
   question: 'Si vous deviez acheter des chips de lentilles Vico, lequel de ces deux paquets choisiriez-vous ?',
-  prix85: 2.69, // prix du 85 g affiché dans les 3 versions
+  // Prix affichés : version d'origine (collecte) et version recalée sur la grande surface (mêmes écarts au kilo)
+  prix85: 2.69,      // 85 g, version d'origine
+  prix85GS: 1.80,    // 85 g, version recalée (prix moyen du relevé du 01/10/2026)
+  urlOriginal: 'questionnaire/original/',
+  urlRecale: 'questionnaire/',
 
   nettoyage: { recues: 144, nonAcheteurs: 10, mineurs: 2, baclees: 2, seuilBaclee_s: 42, medianeDuree: '2 min 34' },
   echantillon: { auraPart: 0.8, etudiantsPart: 0.4 }, // « 8 sur 10 », « 4 sur 10 »
 
-  // Test A/B/C : prix du 200 g tiré au sort
+  // Test A/B/C : prix du 200 g tiré au sort (prix200 = version d'origine, prixGS = version recalée)
   versions: [
-    { id: 'A', prix200: 6.33, n: 44, choix200: 10, vuMoinsCher: 7 },
-    { id: 'B', prix200: 5.49, n: 48, choix200: 25, vuMoinsCher: 33 },
-    { id: 'C', prix200: 4.99, n: 38, choix200: 20, vuMoinsCher: 27 }
+    { id: 'A', prix200: 6.33, prixGS: 4.24, n: 44, choix200: 10, vuMoinsCher: 7 },
+    { id: 'B', prix200: 5.49, prixGS: 3.69, n: 48, choix200: 25, vuMoinsCher: 33 },
+    { id: 'C', prix200: 4.99, prixGS: 3.35, n: 38, choix200: 20, vuMoinsCher: 27 }
   ],
   // Tests par paires (analyse du Sheet)
   paires: { puissanceAB: 0.84, ecartMinDetectableBC: 0.28 },
