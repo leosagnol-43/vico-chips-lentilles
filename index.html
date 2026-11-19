@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vico chips de lentilles — la demande pour un format familial</title>
+<title>Vico chips de lentilles — prix d'un format familial</title>
 <link rel="stylesheet" href="assets/style.css">
 <script src="assets/donnees.js"></script>
 <script src="assets/config.js"></script>
@@ -12,11 +12,11 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Chips de lentilles Vico : un format familial de <span class="g200"></span> à <span class="p200"></span>, pour qui et dans quel circuit ?</h1>
-  <p class="lead">Dossier du cours « Prix et budgets marketing », M1 Marketing, IAE Clermont Auvergne. Le prix du format familial est donné : nous ne cherchons pas à le fixer, nous étudions la <b>demande</b> à ce prix.</p>
+  <h1>Chips de lentilles Vico : quel prix pour un format familial de <span class="g200"></span> en grande surface ?</h1>
+  <p class="lead">Dossier du cours « Prix et budgets marketing », M1 Marketing, IAE Clermont Auvergne. Périmètre : la grande surface (Carrefour, Auchan, E.Leclerc, Intermarché), à partir de notre <a href="methodologie.html#releve">relevé du <span class="d"></span></a> (<span class="nMag"></span> magasins, <span class="nVil"></span> villes).</p>
 
   <div class="card problem">
-    <h3>La question du dossier</h3>
+    <h3>Notre problématique</h3>
     <q class="question" id="question"></q>
   </div>
 
@@ -25,43 +25,41 @@
   <div class="card verdict">
     <h2>Ce qu'on retient</h2>
     <p id="retenir" style="font-size:16px"></p>
-    <p class="note">Le fil rouge : la demande pour le <span class="g200"></span> dépend de son prix <b>au kilo</b> comparé au sachet de 85 g, donc du prix du 85 g dans le magasin. Prix du 85 g : <a href="methodologie.html#releve">relevé du <span class="d"></span></a> (grande surface) et prix de proximité de <span class="p85"></span> <span class="a-sourcer">[source à ajouter]</span>. Parts de choix : <a href="client.html">questionnaire du 15 au 20/10/2026</a>. Parts minimales : <a href="decision.html">calcul de rentabilité</a> (hypothèses estimées).</p>
+    <p class="note">Sources : prix du 85 g et grands formats des concurrents, <a href="methodologie.html#releve">relevé du <span class="d"></span></a> (constaté) ; part qui choisit le <span class="g200"></span>, <a href="client.html">questionnaire du 15 au 20/10/2026</a> (constaté) ; seuil de rentabilité, <a href="decision.html">calcul de la décision</a> (hypothèses de coûts estimées).</p>
   </div>
 
   <div class="card">
     <h2>Notre démarche en 4 étapes</h2>
     <ol class="steps">
-      <li><a href="entreprise.html">L'entreprise : ce que disent les comptes</a><br><span class="note">Intersnack France, propriétaire de Vico : croissance, rentabilité, solidité. Pourquoi le lancement doit couvrir ses coûts.</span></li>
-      <li><a href="format-familial.html">Le marché : le <span class="p200"></span> face aux prix relevés</a><br><span class="note">Concurrents, <a href="carte.html">carte</a> et <a href="enseignes.html">enseignes</a> ; prix au kilo du <span class="g200"></span> comparé au 85 g, magasin par magasin.</span></li>
-      <li><a href="client.html">La demande mesurée</a><br><span class="note">Questionnaire de 130 répondants : part qui choisit le <span class="g200"></span> selon l'écart de prix au kilo.</span></li>
-      <li><a href="decision.html">La décision</a><br><span class="note">Seuil de rentabilité, part minimale à atteindre, comparaison par circuit, stress test et recommandation.</span></li>
+      <li><a href="entreprise.html">L'entreprise : ce que disent les comptes</a><br><span class="note">Intersnack France, propriétaire de Vico : croissance, faible marge, solidité. Pourquoi le prix doit être juste.</span></li>
+      <li><a href="format-familial.html">Le marché : le prix logique du <span class="g200"></span></a><br><span class="note"><a href="concurrents.html">Concurrents</a>, <a href="carte.html">carte</a> et <a href="enseignes.html">enseignes</a> ; baisse du prix au kilo quand le paquet grossit, plancher, prix retenu et plafond.</span></li>
+      <li><a href="client.html">Le client : la demande mesurée</a><br><span class="note">Questionnaire de 130 répondants : part qui choisit le <span class="g200"></span> selon l'écart de prix au kilo.</span></li>
+      <li><a href="decision.html">La décision</a><br><span class="note">Marge, seuil de rentabilité, stress test, alternative à <span class="p399"></span> et recommandation.</span></li>
     </ol>
   </div>
 </div>
 <script>
-const P = modele(CONFIG, 'proximite'), S = modele(CONFIG, 'gs');
+const R = modele();
 document.querySelectorAll('.d').forEach(e => e.textContent = DATA.date);
-document.querySelectorAll('.p200').forEach(e => e.textContent = eur(CONFIG.PRIX_CONNU_200));
 document.querySelectorAll('.g200').forEach(e => e.textContent = G200 + ' g');
-document.querySelectorAll('.p85').forEach(e => e.textContent = eur(CONFIG.PRIX_85_PROXIMITE));
-document.getElementById('question').textContent = `À ${eur(CONFIG.PRIX_CONNU_200)}, la demande pour un format familial de ${G200} g des chips de lentilles Vico suffit-elle à couvrir son coût de lancement, et dans quel circuit ?`;
+document.querySelectorAll('.nMag').forEach(e => e.textContent = DATA.magasins.length);
+document.querySelectorAll('.nVil').forEach(e => e.textContent = DATA.villes.length);
+document.querySelectorAll('.p399').forEach(e => e.textContent = eur(Math.ceil(T_CHIPS.prix * 10) / 10 - 0.01));
+document.getElementById('question').textContent = `À quel prix Vico doit-elle vendre un format familial de ${G200} g de ses chips de lentilles en grande surface, et combien doit-elle en vendre pour que ce soit rentable ?`;
 
-const cmp = e => e < 0 ? `${pcta(e)} moins cher` : `${pcta(e)} <b>plus</b> cher`;
-const besoin = (r) => `alors qu'il en faut ${pcta(r.partMin)} pour être rentable`;
-const verdict = r => r.part > r.partMin;
+const marge = R.volume / R.seuil - 1;   // de combien les ventes attendues dépassent le seuil
+const tient = R.resultat < 0 ? 'la rentabilité n\'est pas atteinte' : marge < 0.1 ? 'la rentabilité tient à peine' : 'la rentabilité est atteinte, avec une marge de sécurité limitée';
 document.getElementById('retenir').innerHTML =
-  `À ${eur(CONFIG.PRIX_CONNU_200)}, le ${G200} g est ${cmp(P.ecart)} au kilo que le sachet de 85 g vendu ${eur(P.prix85)} en proximité : ` +
-  `${P.borneHaute ? 'au mieux ' : ''}<b>${pcta(P.part)}</b> des acheteurs le choisissent, ${besoin(P)}. ` +
-  `En grande surface, où le 85 g coûte ${eur(S.prix85)} en moyenne, le même ${G200} g est ${cmp(S.ecart)} au kilo : ` +
-  `${S.borneHaute ? 'au mieux ' : ''}<b>${pcta(S.part)}</b> le choisiraient, ${besoin(S)}. ` +
-  `<b>Le ${eur(CONFIG.PRIX_CONNU_200)} ` + ({ '10': 'fonctionne en proximité, pas en grande surface.', '11': 'fonctionne en proximité comme en grande surface.',
-    '01': 'fonctionne en grande surface, pas en proximité.', '00': 'ne fonctionne ni en proximité ni en grande surface.' })[+verdict(P) + '' + +verdict(S)] + '</b>';
+  `En grande surface, le sachet de 85 g coûte <b>${eur(PRIX85)}</b> en moyenne (${L_RELEVE()}). ` +
+  `D'après les grands formats des concurrents, un ${G200} g logique coûte <b>${eur(CONFIG.PRIX_200)}</b>, soit ${pcta(ecArr(R.ecart))} de ${R.ecart < 0 ? 'moins' : 'plus'} au kilo. ` +
+  `À cet écart, <b>${pcta(R.part)}</b> des acheteurs choisissent le ${G200} g (${L_QUEST()}). ` +
+  `Mais il faut en vendre environ <b>${nb(Math.round(R.seuil / 1000) * 1000)}</b> par an pour couvrir le lancement : ${tient}, d'où notre recommandation d'un <b>test en magasin</b>.`;
 
 document.getElementById('kpis').innerHTML = [
-  [pct(P.ecart), `Écart au kilo en proximité`, `${eur(kgDe(CONFIG.PRIX_CONNU_200, G200))}/kg contre ${eur(kgDe(P.prix85, G85))}/kg`],
-  [pct(S.ecart), `Écart au kilo en grande surface`, `face au 85 g à ${eur(KG85_GS)}/kg (${L_RELEVE()})`],
-  [pcta(P.part) + ' / ' + pcta(P.partMin), 'Proximité : part mesurée / minimale', `<span class="${verdict(P) ? 'ok' : 'ko'}">résultat ${P.resultat >= 0 ? '+' : ''}${nb(P.resultat)} €</span>`],
-  [(S.borneHaute ? '≤ ' : '') + pcta(S.part) + ' / ' + pcta(S.partMin), 'Grande surface : part attendue / minimale', `<span class="${verdict(S) ? 'ok' : 'ko'}">résultat ${S.borneHaute ? '≤ ' : ''}${S.resultat >= 0 ? '+' : ''}${nb(S.resultat)} €</span>`]
+  [eur(PRIX85), 'Prix moyen du Vico 85 g', `${eur(KG85)}/kg, ${L_RELEVE()}`],
+  [eur(CONFIG.PRIX_200), `Prix retenu pour le ${G200} g`, `${pct(ecArr(R.ecart))} au kilo ; tendance des concurrents : ${eur(T_TOUS.prix)}`],
+  [pcta(R.part), `Choisissent le ${G200} g`, `à ${pct(ecArr(R.pm.version.ecart))} au kilo (version ${R.pm.version.id}, ${L_QUEST('questionnaire')})`],
+  [nb(R.seuil), 'Seuil de rentabilité (sachets par an)', `<span class="${R.resultat >= 0 ? 'ok' : 'ko'}">résultat prévu ${R.resultat >= 0 ? '+' : '−'}${nb(Math.abs(R.resultat))} €</span>`]
 ].map(([a, b, c]) => `<div class="card kpi"><div class="v">${a}</div><div class="l">${b}</div><div class="s">${c}</div></div>`).join('');
 </script>
 </body>
