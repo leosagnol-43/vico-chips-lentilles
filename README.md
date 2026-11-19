@@ -14,7 +14,7 @@ Périmètre : la grande surface (Carrefour, Auchan, E.Leclerc, Intermarché), à
 
 | Page | Contenu |
 |---|---|
-| `index.html` | Question du dossier, ce qu'on retient (calculé), démarche en 4 étapes |
+| `index.html` | Problématique, ce qu'on retient (calculé), démarche en 4 étapes |
 | `entreprise.html` | Comptes d'Intersnack France (propriétaire de Vico), ratios calculés |
 | `concurrents.html`, `carte.html`, `enseignes.html` | Le marché : prix au kilo des concurrents, par ville et par enseigne |
 | `format-familial.html` | Le prix du 200 g : plafond, tendance des concurrents, plancher, prix retenu, 27 magasins |
