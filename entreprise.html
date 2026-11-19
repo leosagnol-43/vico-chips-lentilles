@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L'entreprise — Vico chips de lentilles</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="assets/donnees.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/resultats.js"></script>
+<script src="assets/app.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>L'entreprise : ce que disent les comptes</h1>
+  <p class="lead">Avant d'étudier la demande, on regarde qui lance le produit et ce qu'il peut se permettre. <span class="tag t-constate">Constaté</span> : chiffres des comptes annuels. <span class="tag t-estime">Calculé</span> : ratios tirés de ces chiffres.</p>
+
+  <div class="card">
+    <h2>Qui est derrière Vico ?</h2>
+    <p>Vico est une marque d'<b>Intersnack France</b> (SIREN 412 581 878), dont le siège est à Montigny-Lengrain (Aisne, 02), d'après la <a href="https://www.xerfi.com/etudes-par-entreprise/intersnack-france_412581878" target="_blank" rel="noopener">fiche Xerfi d'Intersnack France</a> (comptes 2022 à 2024). Ces chiffres restent à vérifier sur les comptes officiels déposés : <a href="https://www.pappers.fr/entreprise/412581878" target="_blank" rel="noopener">fiche Pappers, comptes annuels en PDF</a> <span class="a-sourcer">[source à ajouter]</span>.</p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card scroll">
+      <h2>Les comptes d'Intersnack France (en M€)</h2>
+      <table id="tComptes"></table>
+      <p class="note">Source : <a href="https://www.xerfi.com/etudes-par-entreprise/intersnack-france_412581878" target="_blank" rel="noopener">fiche Xerfi</a>, exercices 2022, 2023 et 2024, à recouper avec les <a href="https://www.pappers.fr/entreprise/412581878" target="_blank" rel="noopener">PDF officiels (Pappers)</a> <span class="a-sourcer">[source à ajouter]</span>. Dette financière : proche de zéro sur les trois années.</p>
+    </div>
+    <div class="card">
+      <h2>Chiffre d'affaires et résultat net</h2>
+      <div class="chart sm"><canvas id="cComptes"></canvas></div>
+      <p class="note">Barres : chiffre d'affaires (axe de gauche). Ligne : résultat net (axe de droite). Mêmes sources que le tableau.</p>
+    </div>
+  </div>
+
+  <div class="card scroll">
+    <h2>Les ratios, calculés</h2>
+    <table id="tRatios"></table>
+    <p class="note">Chaque ratio est recalculé à partir du tableau ci-dessus ; la formule est affichée.</p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h2>Lecture</h2>
+      <ul id="lecture"></ul>
+    </div>
+    <div class="card problem">
+      <h2>Ce que ça veut dire pour notre question</h2>
+      <p id="pourNous"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Limites</h2>
+    <ul>
+      <li>Les comptes regroupent <b>toutes les marques</b> d'Intersnack France : on ne voit pas Vico seule, ni les chips de lentilles.</li>
+      <li>Curly et Bénénuts, deux produits présents dans notre <a href="concurrents.html">relevé des concurrents</a> (substituts), seraient aussi des marques du groupe <span class="a-sourcer">[source à ajouter]</span> : une partie de la « concurrence » serait donc interne.</li>
+      <li>Les chiffres viennent d'une fiche de synthèse (Xerfi) et pas encore des liasses officielles.</li>
+    </ul>
+  </div>
+</div>
+<script>
+// source : fiche Xerfi Intersnack France (https://www.xerfi.com/etudes-par-entreprise/intersnack-france_412581878), en M€
+const COMPTES = {
+  annees: [2022, 2023, 2024],
+  ca: [297, 351, 370],
+  rex: [18, 26, 28],          // résultat d'exploitation
+  rn: [13, 18, 19],           // résultat net
+  fp: [125, 117, 112],        // fonds propres
+  bilan: [198, 186, 192],     // total du bilan
+  dette: [0, 0, 0]            // dette financière ≈ 0
+};
+const A = COMPTES.annees, last = A.length - 1;
+const L = [['Chiffre d\'affaires', 'ca'], ['Résultat d\'exploitation', 'rex'], ['Résultat net', 'rn'], ['Fonds propres', 'fp'], ['Total du bilan', 'bilan'], ['Dette financière', 'dette']];
+document.getElementById('tComptes').innerHTML = `<tr><th></th>${A.map(a => `<th class="n">${a}</th>`).join('')}</tr>` +
+  L.map(([l, k]) => `<tr><td>${l}</td>${COMPTES[k].map(v => `<td class="n">${k === 'dette' ? '≈ 0' : fmt(v, 0)}</td>`).join('')}</tr>`).join('');
+
+const R = {
+  croissance: A.map((_, i) => i ? COMPTES.ca[i] / COMPTES.ca[i - 1] - 1 : null),
+  mn: A.map((_, i) => COMPTES.rn[i] / COMPTES.ca[i]),
+  me: A.map((_, i) => COMPTES.rex[i] / COMPTES.ca[i]),
+  af: A.map((_, i) => COMPTES.fp[i] / COMPTES.bilan[i])
+};
+const ratios = [
+  ['Croissance du CA', 'CA de l\'année ÷ CA de l\'année précédente − 1', R.croissance, i => i ? `${COMPTES.ca[i]} ÷ ${COMPTES.ca[i - 1]} − 1` : ''],
+  ['Marge nette', 'résultat net ÷ CA', R.mn, i => `${COMPTES.rn[i]} ÷ ${COMPTES.ca[i]}`],
+  ['Marge d\'exploitation', 'résultat d\'exploitation ÷ CA', R.me, i => `${COMPTES.rex[i]} ÷ ${COMPTES.ca[i]}`],
+  ['Autonomie financière', 'fonds propres ÷ total du bilan', R.af, i => `${COMPTES.fp[i]} ÷ ${COMPTES.bilan[i]}`]
+];
+document.getElementById('tRatios').innerHTML = `<tr><th>Ratio</th><th>Formule</th>${A.map(a => `<th class="n">${a}</th>`).join('')}</tr>` +
+  ratios.map(([n, f, v, d]) => `<tr><td><b>${n}</b></td><td>${f}</td>${v.map((x, i) => `<td class="n">${x == null ? '–' : (n === 'Croissance du CA' ? pct(x, 1) : fmt(x * 100, 1) + ' %')}<br><span class="note">${d(i)}</span></td>`).join('')}</tr>`).join('');
+
+const mnMoy = mean(R.mn), croissTot = COMPTES.ca[last] / COMPTES.ca[0] - 1;
+document.getElementById('lecture').innerHTML = [
+  `<b>En croissance</b> : le chiffre d'affaires passe de ${COMPTES.ca[0]} à ${COMPTES.ca[last]} M€ entre ${A[0]} et ${A[last]} (${pct(croissTot, 0)}), avec un ralentissement en ${A[last]} (${pct(R.croissance[last], 1)}).`,
+  `<b>Rentable, mais avec une faible marge</b> : environ ${fmt(Math.round(mnMoy * 100), 0)} % de marge nette en moyenne (${R.mn.map(x => fmt(x * 100, 1) + ' %').join(', ')}). Sur 100 € vendus, il reste environ ${fmt(mnMoy * 100, 0)} € de bénéfice.`,
+  `<b>Solide</b> : les fonds propres financent ${fmt(R.af[last] * 100, 0)} % du bilan en ${A[last]} et la dette financière est quasi nulle. Les fonds propres baissent un peu (${COMPTES.fp[0]} → ${COMPTES.fp[last]} M€), sans doute des dividendes versés au groupe, ce qu'il faudrait vérifier dans les comptes.`
+].map(x => `<li>${x}</li>`).join('');
+
+document.getElementById('pourNous').innerHTML = `Avec environ ${fmt(Math.round(mnMoy * 100), 0)} % de marge nette, Vico ne peut pas lancer un produit qui ne couvre pas ses coûts en espérant se rattraper ailleurs : un lancement à ${nb(CONFIG.COUTS_FIXES)} € de coûts fixes (hypothèse, voir <a href="decision.html#hypotheses">La décision</a>) qui ne serait pas couvert devrait être compensé par environ ${nb(CONFIG.COUTS_FIXES / mnMoy)} € de ventes supplémentaires (${nb(CONFIG.COUTS_FIXES)} ÷ ${fmt(mnMoy * 100, 1)} %). Le volume vendu de ${G200} g doit donc <b>dépasser le seuil de rentabilité</b> : c'est ce que nous vérifions, <a href="client.html">demande mesurée</a> à l'appui.`;
+
+new Chart(document.getElementById('cComptes'), {
+  data: { labels: A, datasets: [
+    { type: 'bar', label: 'Chiffre d\'affaires (M€)', data: COMPTES.ca, backgroundColor: '#90caf9', yAxisID: 'y' },
+    { type: 'line', label: 'Résultat net (M€)', data: COMPTES.rn, borderColor: '#c62828', backgroundColor: '#c62828', yAxisID: 'y2' }
+  ] },
+  options: { maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: 'CA (M€)' } },
+    y2: { position: 'right', beginAtZero: true, grid: { drawOnChartArea: false }, title: { display: true, text: 'Résultat net (M€)' } } } }
+});
+</script>
+</body>
+</html>
