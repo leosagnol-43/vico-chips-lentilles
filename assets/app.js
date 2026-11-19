@@ -38,7 +38,8 @@ function listeASourcer() {
   const items = ms.map((m, i) => {
     m.id ||= 'as' + (i + 1);
     const bloc = m.closest('li, p, td, tr, label') || m.parentElement;
-    let t = bloc.textContent.replace(/\[source à ajouter\]/g, '').replace(/\s+/g, ' ').trim();
+    const tr = m.closest('tr');
+    let t = (tr && bloc.tagName === 'TD' && tr.cells[0] !== bloc ? tr.cells[0].textContent.replace(/Constaté|Estimé|Donné/, '') + ' : ' : '') + bloc.textContent.replace(/\[source à ajouter\]/g, '').replace(/\s+/g, ' ').trim();
     if (t.length > 170) t = t.slice(0, 167) + '…';
     return `<li><a href="#${m.id}">${t}</a></li>`;
   });

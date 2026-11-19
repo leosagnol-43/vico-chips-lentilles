@@ -88,7 +88,7 @@
 
   <div class="card scroll" id="hypotheses">
     <h2>f) Hypothèses : valeur, pourquoi, source</h2>
-    <p class="note"><span class="tag t-constate">Constaté</span> chiffre relevé ou mesuré, avec lien. <span class="tag t-estime">Estimé</span> hypothèse de travail, à remplacer par une donnée sourcée.</p>
+    <p class="note"><span class="tag t-constate">Constaté</span> chiffre relevé ou mesuré, avec lien. <span class="tag t-estime">Estimé</span> hypothèse de travail, à remplacer par une donnée sourcée. <span class="tag t-ref">Donné</span> point de départ du dossier.</p>
     <table id="tHyp"></table>
   </div>
 
@@ -149,7 +149,7 @@ function calc() {
   $('kPartMin').textContent = isFinite(r.partMin) ? pcta(r.partMin, 1) : '–';
   $('kPart').innerHTML = `<span class="${r.part > r.partMin ? 'ok' : 'ko'}">${r.borneHaute ? '≤ ' : ''}${pcta(r.part)}</span>`;
   $('res').innerHTML = `<span class="${cls(r.resultat)}">${r.borneHaute ? '≤ ' : ''}${sg(r.resultat)}</span>`;
-  $('resTxt').textContent = `Résultat du lancement sur un an : ${nb(r.volume)} ${G200} g attendus${r.borneHaute ? ' (au mieux)' : ''} × ${eur(r.gain)} − ${nb(h.COUTS_FIXES)} €`;
+  $('resTxt').textContent = `Résultat du lancement sur un an : ${nb(r.volume)} sachets de ${G200} g attendus${r.borneHaute ? ' (au mieux)' : ''} × ${eur(r.gain)} − ${nb(h.COUTS_FIXES)} €`;
 
   // b) étapes
   const a = r.a, b = r.b;
@@ -225,7 +225,7 @@ calc();
 /* f) Hypothèses (valeurs de config.js) */
 const K = CONFIG;
 const H = [
-  ['Prix du format familial', eur(K.PRIX_CONNU_200), 'Donné : c\'est le point de départ du dossier. Nous étudions la demande à ce prix, sans le modifier.', 'Prix donné ; testé tel quel (version C) dans le <a href="client.html">questionnaire</a>', 'c'],
+  ['Prix du format familial', eur(K.PRIX_CONNU_200), 'Donné : c\'est le point de départ du dossier. Nous étudions la demande à ce prix, sans le modifier.', 'Prix donné ; testé tel quel (version C) dans le <a href="client.html">questionnaire</a>', 'd'],
   ['Prix du 85 g en proximité', eur(K.PRIX_85_PROXIMITE), 'Prix d\'un magasin de proximité, nettement au-dessus de la grande surface ; c\'est le prix affiché dans le questionnaire.', `<span class="a-sourcer">[source à ajouter]</span> (relevé en magasin de proximité, avec date)`, 'e'],
   ['Prix du 85 g en grande surface', eur(PRIX85_GS), `Moyenne des ${lignes({ p: VICO }).length} prix au kilo relevés × 0,085 kg.`, L_RELEVE(), 'c'],
   ['TVA', fmt(K.TVA * 100, 1) + ' %', 'Taux réduit applicable aux produits alimentaires.', '<span class="a-sourcer">[source à ajouter]</span> piste : Code général des impôts, article 278-0 bis', 'e'],
@@ -239,7 +239,7 @@ const H = [
   ['Part de référence', pcta(K.PART_REF), 'Part mesurée à notre prix (version C) : sert à convertir une part de choix en volume.', `<a href="client.html">Questionnaire</a>, ${RESULTATS.collecte.debut}–${RESULTATS.collecte.fin}`, 'c']
 ];
 $('tHyp').innerHTML = `<tr><th>Hypothèse</th><th>Valeur</th><th>Pourquoi</th><th>Source</th></tr>` +
-  H.map(([n, v, p, s, t]) => `<tr><td><b>${n}</b><br><span class="tag ${t === 'c' ? 't-constate' : 't-estime'}">${t === 'c' ? 'Constaté' : 'Estimé'}</span></td><td>${v}</td><td>${p}</td><td>${s}</td></tr>`).join('');
+  H.map(([n, v, p, s, t]) => `<tr><td><b>${n}</b><br><span class="tag ${({ c: 't-constate', e: 't-estime', d: 't-ref' })[t]}">${({ c: 'Constaté', e: 'Estimé', d: 'Donné' })[t]}</span></td><td>${v}</td><td>${p}</td><td>${s}</td></tr>`).join('');
 
 /* g) Recommandation (valeurs par défaut de config.js) */
 const P0 = modele(CONFIG, 'proximite'), S0 = modele(CONFIG, 'gs'), Pr = RESULTATS.profils;
