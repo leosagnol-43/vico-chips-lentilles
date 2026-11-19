@@ -57,3 +57,11 @@ select,input[type=number]{font:inherit;padding:6px 8px;border:1px solid var(--li
 footer{margin-top:30px;color:var(--muted);font-size:13px;text-align:center}
 a{color:#0b63c4}
 @media (max-width:600px){h1{font-size:23px}#map{height:400px}.chart{height:360px}}
+/* Ajouts : sources, constaté / estimé, calculs */
+.a-sourcer{background:#fff59d;color:#c62828;font-weight:700;padding:0 4px;border-radius:3px;white-space:nowrap}
+.t-constate{background:#e3eefb;color:#1565c0} .t-estime{background:#fff1e0;color:#ef6c00}
+.question{font-size:22px;font-weight:700;line-height:1.35;quotes:"« " " »"}
+.calc{font-family:ui-monospace,Consolas,monospace;font-size:13px;background:#f5f5f7;border-radius:8px;padding:10px 12px;margin:8px 0;overflow-x:auto;white-space:pre-wrap}
+.verdict{border-left:4px solid var(--good)} .verdict.ko{border-left-color:var(--bad);color:inherit}
+td.vert{background:#e8f3e8;color:var(--good);font-weight:600} td.rouge{background:#fdecea;color:var(--bad);font-weight:600}
+.archive{background:#fff3cd;border:1px solid #f0c36d;color:#7a5200;padding:10px 14px;border-radius:10px;font-weight:600;margin-bottom:14px}
