@@ -20,12 +20,39 @@
     <q class="question" id="question"></q>
   </div>
 
+  <div class="card">
+    <h2>Le raisonnement en 3 questions</h2>
+    <ol class="steps">
+      <li><a href="format-familial.html">1. Quel prix est logique pour un <b data-v="g200"></b> ?</a> <span class="note">(le marché)</span><br>Le sachet de 85 g coûte <b data-v="p85"></b> en moyenne. Quand les concurrents passent à un grand paquet, ils baissent le prix au kilo d'environ <b data-v="baisse"></b>. Appliqué à Vico, cela donne <b data-v="tendance"></b>, arrondi à <b data-v="p200"></b>. Ce prix doit rester <b>au-dessus du plancher</b> (<b data-v="plancher"></b>, en dessous Vico perd de l'argent sur chaque paquet) et <b>sous le plafond</b> (<b data-v="plafond"></b>, au-delà le grand paquet n'est plus moins cher au kilo).</li>
+      <li><a href="client.html">2. À ce prix, les clients prennent-ils le <b data-v="g200"></b> ?</a> <span class="note">(notre questionnaire)</span><br>Quand le <b data-v="g200"></b> est <b data-v="ecartB"></b> moins cher au kilo, <b data-v="partB"></b> des répondants le choisissent, contre <b data-v="partA"></b> seulement quand il n'est pas moins cher au kilo. Le prix de <b data-v="p200"></b> donne justement cet écart.</li>
+      <li><a href="decision.html">3. Est-ce rentable, une fois les coûts payés ?</a> <span class="note">(la décision)</span><br>Sur chaque <b data-v="g200"></b> vendu, Vico gagne <b data-v="gain"></b> une fois payés le distributeur, la fabrication, l'emballage et les petits sachets qu'il ne vend plus. Pour rembourser <b data-v="cf"></b> de lancement, il faut en vendre environ <b data-v="seuilk"></b> par an ; on en attend <b data-v="volume"></b>. C'est <b>tout juste</b> : le lancement est remboursé en <b data-v="mois"></b> mois.</li>
+    </ol>
+    <p class="note">Avant ces trois questions, la page <a href="entreprise.html">L'entreprise</a> montre pourquoi Vico ne peut pas se permettre de brader son prix.</p>
+  </div>
+
   <div class="grid g4" id="kpis"></div>
 
   <div class="card verdict">
     <h2>Ce qu'on retient</h2>
     <p id="retenir" style="font-size:16px"></p>
     <p class="note">Sources : prix du 85 g et grands formats des concurrents, <a href="methodologie.html#releve">relevé du <span class="d"></span></a> (constaté) ; part qui choisit le <span class="g200"></span>, <a href="client.html">questionnaire du 15 au 20/10/2026</a> (constaté) ; seuil de rentabilité, <a href="decision.html">calcul de la décision</a> (hypothèses de coûts estimées).</p>
+  </div>
+
+  <div class="card">
+    <details class="lexique">
+      <summary>Petit lexique : les mots du dossier</summary>
+      <dl>
+        <dt>Prix au kilo</dt><dd>Prix du paquet ÷ son poids. C'est ce qui permet de comparer un paquet de 85 g et un paquet de 200 g. Exemple : 85 g à <b data-v="p85"></b> = <b data-v="kg85b"></b>.</dd>
+        <dt>Écart au kilo</dt><dd>De combien le <b data-v="g200"></b> est moins cher (ou plus cher) au kilo que le 85 g. À <b data-v="p200"></b>, il est <b data-v="ecart"></b> moins cher.</dd>
+        <dt>Plancher</dt><dd>Prix en dessous duquel Vico perd de l'argent sur chaque paquet (il vient des <b>coûts</b>).</dd>
+        <dt>Plafond</dt><dd>Prix au-delà duquel le grand paquet n'est plus moins cher au kilo que le petit (il vient du <b>prix du 85 g</b>).</dd>
+        <dt>Marge du distributeur</dt><dd>Ce que garde le supermarché sur le prix payé par le client.</dd>
+        <dt>Cannibalisation</dt><dd>Quand un client achète le <b data-v="g200"></b> au lieu du 85 g qu'il aurait acheté : Vico perd la marge de ce petit sachet.</dd>
+        <dt>Seuil de rentabilité</dt><dd>Nombre de paquets à vendre pour rembourser les coûts de lancement.</dd>
+        <dt>Stress test</dt><dd>On refait le calcul en imaginant qu'on s'est trompé (coûts plus élevés, moins de ventes…) pour voir si le projet tient encore.</dd>
+        <dt>p (p-value)</dt><dd>Probabilité qu'une différence observée dans le questionnaire soit due au hasard. Sous 0,05, on considère la différence comme réelle.</dd>
+      </dl>
+    </details>
   </div>
 
   <div class="card">
