@@ -11,8 +11,17 @@ const PAGES = [
   ['methodologie.html', 'Méthodologie']
 ];
 const ENSEIGNES = ['Carrefour', 'Auchan', 'Leclerc', 'Intermarché'];
-const COUL_ENS = { Carrefour: '#1565c0', Auchan: '#c62828', Leclerc: '#ef6c00', 'Intermarché': '#6a1b9a' };
-const COUL_CAT = { 'Référence': '#c62828', 'Concurrent direct': '#2e7d32', 'Concurrent indirect': '#1565c0', 'Substitut': '#ef6c00' };
+const COUL_ENS = { Carrefour: '#2f6f9f', Auchan: '#d71f26', Leclerc: '#ef7d00', 'Intermarché': '#7a4b8c' };
+const COUL_CAT = { 'Référence': '#d71f26', 'Concurrent direct': '#3e8e2b', 'Concurrent indirect': '#8a5a2b', 'Substitut': '#f5b80f' };
+
+/* Graphiques : mêmes polices et couleurs que le site */
+if (window.Chart) {
+  Chart.defaults.font.family = "'Nunito', system-ui, sans-serif";
+  Chart.defaults.color = '#7d6b57';
+  Chart.defaults.borderColor = '#ebe2cf';
+  Chart.defaults.plugins.tooltip.backgroundColor = '#5b3a1f';
+  Chart.defaults.elements.bar.borderRadius = 6;
+}
 const CAT_CLASS = { 'Référence': 't-ref', 'Concurrent direct': 't-direct', 'Concurrent indirect': 't-indirect', 'Substitut': 't-substitut' };
 const VICO = 0;
 
@@ -21,8 +30,13 @@ function nav() {
   const n = document.createElement('nav');
   n.className = 'top';
   n.innerHTML = PAGES.map(([h, t]) => `<a href="${h}"${h === here ? ' class="on"' : ''}>${t}</a>`).join('');
-  document.querySelector('.wrap').prepend(n);
-  filEtapes(here, n);
+  // Bandeau vert en haut de page, avec le nom de l'étude et le menu
+  const b = document.createElement('header');
+  b.className = 'bandeau';
+  b.innerHTML = `<div class="bandeau-in"><a class="marque" href="index.html"><span class="m1"><b>Vico</b>Chips de lentilles</span><span class="m2">Étude de prix · format familial ${CONFIG.POIDS_200} g · M1 Marketing, IAE Clermont Auvergne</span></a></div>`;
+  b.firstChild.append(n);
+  document.body.prepend(b);
+  filEtapes(here);
   remplirValeurs();
   listeASourcer();
   const f = document.createElement('footer');
@@ -38,14 +52,14 @@ const ETAPES = [
   { titre: 'Le client', question: 'À ce prix, les clients choisissent-ils le 200 g ?', pages: ['client.html'] },
   { titre: 'La décision', question: 'Est-ce rentable, une fois les coûts payés ?', pages: ['decision.html'] }
 ];
-function filEtapes(here, apres) {
+function filEtapes(here) {
   const i = ETAPES.findIndex(e => e.pages.includes(here));
   if (i < 0) return;
   const d = document.createElement('div');
   d.className = 'fil';
   d.innerHTML = `<div class="fil-etapes">${ETAPES.map((e, k) => `<a href="${e.pages[e.pages.length - 1]}" class="${k === i ? 'on' : k < i ? 'fait' : ''}"><span>${k + 1}</span>${e.titre}</a>`).join('')}</div>` +
     `<div class="fil-q">Étape ${i + 1} sur ${ETAPES.length} : <b>${ETAPES[i].question}</b></div>`;
-  apres.after(d);
+  document.querySelector(".wrap").prepend(d);
 }
 
 /* Chiffres des encarts explicatifs : tout élément <b data-v="clé"></b> reçoit la valeur calculée.
