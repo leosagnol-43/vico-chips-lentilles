@@ -8,7 +8,7 @@ Périmètre : la grande surface (Carrefour, Auchan, E.Leclerc, Intermarché), à
 
 ## Groupe
 
-[NOMS À COMPLÉTER]
+Souilmi, Moulin, Charras, Bousselham, Sagnol
 
 ## Pages (dans l'ordre du dossier)
 

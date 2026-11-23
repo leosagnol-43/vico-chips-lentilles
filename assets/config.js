@@ -28,5 +28,6 @@ const CONFIG = {
   PART_REF: 0.53,
 
   // --- Contrôle de vraisemblance du volume ---
-  NB_MAGASINS: 3000         // hypers et supermarchés qui vendraient le 200 g (hypothèse, source à ajouter)
+  NB_MAGASINS: 3000,        // magasins qui référenceraient le 200 g (hypothèse)
+  NB_GSA_FRANCE: 12000      // grandes surfaces alimentaires en France au 01/01/2020 (Insee Focus n° 305, 27/07/2023)
 };

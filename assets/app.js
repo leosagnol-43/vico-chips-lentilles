@@ -26,7 +26,7 @@ function nav() {
   remplirValeurs();
   listeASourcer();
   const f = document.createElement('footer');
-  f.innerHTML = `Projet étudiant · M1 Marketing, IAE Clermont Auvergne · cours « Prix et budgets marketing » · Prix relevés le <a href="methodologie.html#releve">${DATA.date}</a> sur les sites drive de Carrefour, Auchan, E.Leclerc et Intermarché · Groupe : [NOMS À COMPLÉTER]`;
+  f.innerHTML = `Projet étudiant · M1 Marketing, IAE Clermont Auvergne · cours « Prix et budgets marketing » · Prix relevés le <a href="methodologie.html#releve">${DATA.date}</a> sur les sites drive de Carrefour, Auchan, E.Leclerc et Intermarché · Groupe : Souilmi, Moulin, Charras, Bousselham, Sagnol`;
   document.querySelector('.wrap').append(f);
 }
 document.addEventListener('DOMContentLoaded', nav);
