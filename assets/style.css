@@ -65,3 +65,23 @@ a{color:#0b63c4}
 .verdict{border-left:4px solid var(--good)} .verdict.ko{border-left-color:var(--bad);color:inherit}
 td.vert{background:#e8f3e8;color:var(--good);font-weight:600} td.rouge{background:#fdecea;color:var(--bad);font-weight:600}
 .archive{background:#fff3cd;border:1px solid #f0c36d;color:#7a5200;padding:10px 14px;border-radius:10px;font-weight:600;margin-bottom:14px}
+/* Encarts explicatifs « En clair » */
+.encart{background:#eef5fd;border-left:4px solid #1565c0;border-radius:10px;padding:12px 16px;margin:0 0 18px;font-size:15px}
+.encart>.titre{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1565c0;margin-bottom:4px}
+.encart p{margin:6px 0}
+.encart ol,.encart ul{margin:6px 0;padding-left:20px}
+.encart.attention{background:#fff8e1;border-left-color:#ef6c00}
+.encart.attention>.titre{color:#ef6c00}
+.card .encart{margin:12px 0 0}
+details.lexique summary{cursor:pointer;font-weight:700}
+details.lexique dt{font-weight:700;margin-top:8px}
+details.lexique dd{margin:2px 0 0 0;color:var(--muted)}
+/* Fil des 4 étapes */
+.fil{background:#fff;border-radius:14px;padding:12px 16px;margin:-8px 0 20px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.fil-etapes{display:flex;flex-wrap:wrap;gap:6px}
+.fil-etapes a{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 4px;border-radius:999px;background:#f5f5f7;color:var(--muted);text-decoration:none;font-size:13px;font-weight:600}
+.fil-etapes a span{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#e5e5ea;color:var(--muted);font-size:12px}
+.fil-etapes a.fait span{background:var(--accent-soft);color:var(--accent)}
+.fil-etapes a.on{background:var(--accent);color:#fff}
+.fil-etapes a.on span{background:#fff;color:var(--accent)}
+.fil-q{margin-top:8px;font-size:14px}

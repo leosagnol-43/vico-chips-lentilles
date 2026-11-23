@@ -20,15 +20,55 @@ function nav() {
   const here = location.pathname.split('/').pop() || 'index.html';
   const n = document.createElement('nav');
   n.className = 'top';
-  // le libellé du menu suit le prix de config.js
   n.innerHTML = PAGES.map(([h, t]) => `<a href="${h}"${h === here ? ' class="on"' : ''}>${t}</a>`).join('');
   document.querySelector('.wrap').prepend(n);
+  filEtapes(here, n);
+  remplirValeurs();
   listeASourcer();
   const f = document.createElement('footer');
   f.innerHTML = `Projet étudiant · M1 Marketing, IAE Clermont Auvergne · cours « Prix et budgets marketing » · Prix relevés le <a href="methodologie.html#releve">${DATA.date}</a> sur les sites drive de Carrefour, Auchan, E.Leclerc et Intermarché · Groupe : [NOMS À COMPLÉTER]`;
   document.querySelector('.wrap').append(f);
 }
 document.addEventListener('DOMContentLoaded', nav);
+
+/* Fil du raisonnement : les 4 étapes du dossier, affichées en haut des pages concernées */
+const ETAPES = [
+  { titre: "L'entreprise", question: 'Vico peut-elle se permettre de vendre moins cher ?', pages: ['entreprise.html'] },
+  { titre: 'Le marché', question: 'Quel prix est logique pour un 200 g ?', pages: ['concurrents.html', 'carte.html', 'enseignes.html', 'format-familial.html'] },
+  { titre: 'Le client', question: 'À ce prix, les clients choisissent-ils le 200 g ?', pages: ['client.html'] },
+  { titre: 'La décision', question: 'Est-ce rentable, une fois les coûts payés ?', pages: ['decision.html'] }
+];
+function filEtapes(here, apres) {
+  const i = ETAPES.findIndex(e => e.pages.includes(here));
+  if (i < 0) return;
+  const d = document.createElement('div');
+  d.className = 'fil';
+  d.innerHTML = `<div class="fil-etapes">${ETAPES.map((e, k) => `<a href="${e.pages[e.pages.length - 1]}" class="${k === i ? 'on' : k < i ? 'fait' : ''}"><span>${k + 1}</span>${e.titre}</a>`).join('')}</div>` +
+    `<div class="fil-q">Étape ${i + 1} sur ${ETAPES.length} : <b>${ETAPES[i].question}</b></div>`;
+  apres.after(d);
+}
+
+/* Chiffres des encarts explicatifs : tout élément <b data-v="clé"></b> reçoit la valeur calculée.
+   decision.html rappelle cette fonction avec les valeurs des curseurs. */
+function valeurs(r = modele(), h = CONFIG) {
+  const pl = plancher(h), V = id => VERSIONS.find(v => v.id === id);
+  return {
+    p85: eur(PRIX85), kg85: eur(KG85) + '/kg', kg85b: eur(kgDe(PRIX85, G85)) + '/kg', p200: eur(r.prix200), kg200: eur(kgDe(r.prix200, G200)) + '/kg', g200: G200 + ' g',
+    plafond: eur(PLAFOND), plancher: eur(pl.prix), tendance: eur(T_TOUS.prix), tchips: eur(T_CHIPS.prix), baisse: pcta(T_TOUS.baisse, 1),
+    ecart: pcta(ecArr(r.ecart)), partA: pcta(partArr(V('A'))), partB: pcta(partArr(V('B'))), partC: pcta(partArr(V('C'))),
+    ecartB: pcta(ecArr(V('B').ecart)), ecartC: pcta(ecArr(V('C').ecart)),
+    v200: eur(r.a.v), ht200: eur(r.a.ht), distrib: eur(r.a.ht - r.a.v), tva: eur(r.a.prix - r.a.ht), fab200: eur(r.a.fab), emb200: eur(r.a.emb), autres200: eur(r.a.autres),
+    m200: eur(r.a.m), m85: eur(r.b.m), can: fmt(h.CANNIBALISATION, 1), perte85: eur(h.CANNIBALISATION * r.b.m), gain: eur(r.gain),
+    cf: nb(h.COUTS_FIXES) + ' €', seuil: nb(r.seuil), seuilk: nb(Math.round(r.seuil / 1000) * 1000), volume: nb(r.volume), pmin: pcta(r.partMin, 1), part: pcta(r.part),
+    resultat: (r.resultat >= 0 ? '+' : '−') + nb(Math.abs(r.resultat)) + ' €', cumul3: (r.cumul3 >= 0 ? '+' : '−') + nb(Math.abs(r.cumul3)) + ' €',
+    mois: fmt(r.moisRemb, 1), secu: pcta(1 - r.seuil / r.volume, 1), magsem: fmt(r.parMagSem, 1), n: VERSIONS.reduce((s, v) => s + v.n, 0),
+    nmag: DATA.magasins.length, nvil: DATA.villes.length, ncomp: T_TOUS.n, ratio: fmt(G200 / G85, 2)
+  };
+}
+function remplirValeurs(r, h) {
+  const v = valeurs(r, h);
+  document.querySelectorAll('[data-v]').forEach(e => { if (v[e.dataset.v] != null) e.textContent = v[e.dataset.v]; });
+}
 
 /* Marqueurs « source à ajouter » : liste automatique en bas de chaque page */
 const A_SOURCER = '<span class="a-sourcer">[source à ajouter]</span>';
