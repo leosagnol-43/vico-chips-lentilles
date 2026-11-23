@@ -106,7 +106,7 @@ document.getElementById('noteEchelle').innerHTML = `<b>Plancher</b> : prix en de
 const kg200 = kgDe(PX, G200);
 document.getElementById('calculs').innerHTML = `
 <p><b>1. Prix moyen du Vico 85 g en grande surface</b> : moyenne des ${V85.length} prix du ${lien}. <span class="calc">${eur(PRIX85_BRUT, 4)} → ${eur(PRIX85)} (arrondi au centime) ; ${eur(KG85)}/kg (moyenne des prix au kilo affichés)</span></p>
-<p><b>2. Plafond</b> : un ${G200} g au même prix au kilo que le 85 g. <span class="calc">${fmt(KG85)} €/kg × ${fmt(G200 / 1000, 1)} kg = ${eur(PLAFOND)}</span></p>
+<p><b>2. Plafond</b> : un ${G200} g au même prix au kilo que le 85 g. <span class="calc">${fmt(KG85)} €/kg × ${fmt(G200 / 1000, 1)} kg = ${eur(PLAFOND)}</span></p>
 <p><b>3. Tendance des concurrents (tous produits)</b> : sur ${T_TOUS.n} comparaisons petit / grand format dans le même magasin, la baisse du prix au kilo suit b × ln(poids grand ÷ poids petit), avec b = ${fmt(T_TOUS.b, 4)}. Pour 85 g → ${G200} g : <span class="calc">${fmt(T_TOUS.b, 4)} × ln(${G200} ÷ ${G85}) = ${pct(T_TOUS.baisse, 1)} → ${fmt(KG85)} × (1 − ${fmt(-T_TOUS.baisse, 3)}) × ${fmt(G200 / 1000, 1)} = ${eur(T_TOUS.prix)}</span></p>
 <p><b>4. Chips uniquement</b> : sur les ${T_CHIPS.n} comparaisons où le petit format est un paquet de chips, b = ${fmt(T_CHIPS.b, 4)}. <span class="calc">${pct(T_CHIPS.baisse, 1)} au kilo → ${fmt(KG85)} × (1 − ${fmt(-T_CHIPS.baisse, 3)}) × ${fmt(G200 / 1000, 1)} = ${eur(T_CHIPS.prix)}</span></p>
 <p><b>5. Fourchette logique</b> : de ${eur(Math.floor(T_TOUS.prix * 10) / 10 - 0.01)} à ${eur(Math.ceil(T_CHIPS.prix * 10) / 10 - 0.01)} (prix psychologiques en ,x9 autour de ${eur(T_TOUS.prix)} et ${eur(T_CHIPS.prix)}).</p>
@@ -142,7 +142,7 @@ new Chart(document.getElementById('cScatter'), {
     { label: 'Tendance', type: 'line', data: Array.from({ length: 30 }, (_, i) => { const r = 1 + i * .15; return { x: r, y: 100 * T_TOUS.b * Math.log(r) }; }), borderColor: '#888', borderDash: [5, 4], pointRadius: 0 },
     { label: `Vico ${G200} g à ${eur(PX)}`, data: [{ x: ratioVico, y: 100 * (kg200 / KG85 - 1), t: `Vico ${G200} g à ${eur(PX)}` }], backgroundColor: '#c62828', pointRadius: 8 }
   ] },
-  options: { maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: c => ` ${c.raw.t || ''} : ${fmt(c.raw.y, 1)} %` } } },
+  options: { maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: c => ` ${c.raw.t || ''} : ${fmt(c.raw.y, 1)} %` } } },
     scales: { x: { title: { display: true, text: 'Grand format / petit format (poids)' } }, y: { title: { display: true, text: 'Écart de prix au kilo (%)' } } } }
 });
 document.getElementById('noteScatter').textContent = `Chaque point bleu = un produit dans un magasin. Axe horizontal : combien de fois le grand format est plus lourd que le petit. Le point rouge montre Vico ${G200} g à ${eur(PX)} face au 85 g moyen : il tombe sur la tendance des concurrents.`;

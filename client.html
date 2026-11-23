@@ -65,7 +65,7 @@
       <h2>Le <span class="g200"></span> seul (Gabor-Granger)</h2>
       <div class="chart sm"><canvas id="cGG"></canvas></div>
       <p id="ggTxt"></p>
-      <div class="encart"><span class="titre">En clair</span><p>Présenté <b>seul</b>, sans le petit sachet à côté, le <b data-v="g200"></b> ne trouve presque pas preneur : <span id="gg0"></span>. Il ne se vend donc pas « pour lui-même » : il se vend <b>parce qu'il est moins cher au kilo que le 85 g posé à côté</b>. C'est pour cela que notre prix repose sur le test A/B/C.</p></div>
+      <div class="encart"><span class="titre">En clair</span><p>Présenté <b>seul</b>, sans le petit sachet à côté, le <b data-v="g200"></b> se vend peu : <span id="gg0"></span>. Il se vend surtout <b>parce qu'il est moins cher au kilo que le 85 g posé à côté</b> : dans ce cas, <b data-v="partB"></b> le choisissent. Et au-delà de 4 €, presque plus personne n'en veut : il faut rester en dessous.</p></div>
     </div>
     <div class="card">
       <h2>« L'achèteriez-vous ? » n'est pas « lequel prendriez-vous ? »</h2>
@@ -116,7 +116,7 @@ document.getElementById('tests').innerHTML = `<p>Différence entre les trois ver
 new Chart(document.getElementById('cDemande'), {
   type: 'bar',
   data: { labels: VERSIONS.map(v => `${v.id} : ${ecTxt(v)} (${eur(v.prix200)})`), datasets: [{ data: VERSIONS.map(v => 100 * v.part), backgroundColor: VERSIONS.map(v => v.prix200 === CONFIG.PRIX_200 ? '#2e7d32' : '#90caf9') }] },
-  options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${fmt(c.raw, 0)} % choisissent le ${G200} g` } } },
+  options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${fmt(c.raw, 0)} % choisissent le ${G200} g` } } },
     scales: { y: { min: 0, max: 70, title: { display: true, text: `Choisissent le ${G200} g (%)` } } } }
 });
 document.getElementById('lectureDemande').innerHTML = `<b>Lecture</b> : la demande <b>double</b> dès ${pct(ecArr(V('B').ecart))} au kilo (${pc(V('A').choix200, V('A').n)} → ${pc(V('B').choix200, V('B').n)}), et descendre plus bas <b>ne sert à rien</b> (${pc(V('C').choix200, V('C').n)} à ${pct(ecArr(V('C').ecart))}). C'est pourquoi le prix retenu, ${eur(CONFIG.PRIX_200)}, vise l'écart de la version B (${pct(ecArr(M.ecart))} au kilo face au 85 g à ${eur(PRIX85)}).`;
@@ -145,15 +145,18 @@ const gg = R.gaborGranger.map(g => ({ prix: g.prix, part: g.oui != null ? g.oui 
 new Chart(document.getElementById('cGG'), {
   type: 'bar',
   data: { labels: gg.map(g => eur(g.prix)), datasets: [{ data: gg.map(g => 100 * g.part), backgroundColor: '#90caf9' }] },
-  options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${fmt(c.raw, 0)} % achèteraient` } } },
+  options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${fmt(c.raw, 0)} % achèteraient` } } },
     scales: { y: { min: 0, title: { display: true, text: `Achèteraient le ${G200} g seul (%)` } } } }
 });
 document.getElementById('ggTxt').innerHTML = `Prix proposés un par un, du moins cher au plus cher, au ${G200} g présenté seul (${n} répondants, ${LQ('questionnaire')}) : ` +
   gg.map(g => `${eur(g.prix)} → <b>${pcta(g.part)}</b>${g.oui != null ? ` (${g.oui}/${n})` : ''}`).join(' ; ') + '.';
-const gZero = gg.find(g => g.part === 0), ggRetenu = gg.find(g => Math.abs(g.prix - CONFIG.PRIX_200) < 0.005);
-const ggResume = `${pcta(gg[0].part)} l'achèteraient à ${eur(gg[0].prix)}` + (gZero ? `, et plus personne dès ${eur(gZero.prix)}` : '');
-document.getElementById('gg0').textContent = ggResume;
-document.getElementById('ggConclusion').innerHTML = `<b>Conclusion</b> : présenté seul, le ${G200} g ne trouve presque pas preneur (${ggResume}${ggRetenu && ggRetenu.part > 0 ? `, dont ${pcta(ggRetenu.part)} à ${eur(ggRetenu.prix)}` : ''}). Sa demande ne vient pas de son prix seul, mais de la <b>comparaison avec le 85 g</b> en rayon : quand les deux paquets sont côte à côte, ${pcta(partArr(V('B')))} choisissent le ${G200} g à ${eur(V('B').prix200)}. C'est pourquoi le prix retenu s'appuie sur le test A/B/C, et pourquoi le ${G200} g doit <b>toujours</b> être vendu à côté du 85 g.`;
+const gZero = gg.find(g => g.part === 0);
+const ggBas = [...gg].reverse().find(g => g.prix <= CONFIG.PRIX_200), ggHaut = gg.find(g => g.prix >= CONFIG.PRIX_200);   // prix testés qui encadrent le prix retenu
+const ggPlage = ggBas && ggHaut && ggBas !== ggHaut ? `entre ${pcta(ggHaut.part)} et ${pcta(ggBas.part)}` : '';
+document.getElementById('gg0').textContent = gg.filter(g => g.part > 0).map(g => `${pcta(g.part)} à ${eur(g.prix)}`).join(', ') + (gZero ? `, plus personne dès ${eur(gZero.prix)}` : '') + (ggPlage ? ` ; à ${eur(CONFIG.PRIX_200)}, ${ggPlage} l'achèteraient` : '');
+document.getElementById('ggConclusion').innerHTML = `<b>Conclusion</b> : présenté seul, le ${G200} g trouve peu de preneurs (${gg.filter(g => g.part > 0).map(g => `${pcta(g.part)} à ${eur(g.prix)}`).join(', ')}${gZero ? `, puis plus personne dès ${eur(gZero.prix)}` : ''}). ` +
+  (ggPlage ? `Notre prix de ${eur(CONFIG.PRIX_200)} se situe entre ${eur(ggBas.prix)} et ${eur(ggHaut.prix)} : seul, ${ggPlage} l'achèteraient. ` : '') +
+  `Quand les deux paquets sont côte à côte, ${pcta(partArr(V('B')))} choisissent le ${G200} g à ${eur(V('B').prix200)} : la demande vient surtout de la <b>comparaison avec le 85 g</b>. Et au-delà de 4 €, la demande pour le ${G200} g seul s'effondre, ce qui confirme la fourchette de ${eur(Math.floor(T_TOUS.prix * 10) / 10 - 0.01)} à ${eur(Math.ceil(T_CHIPS.prix * 10) / 10 - 0.01)} tirée des <a href="format-familial.html">prix des concurrents</a>.`;
 
 /* Profils */
 const Pr = R.profils;

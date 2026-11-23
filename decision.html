@@ -144,7 +144,7 @@ function calc() {
   $('troisPrix').innerHTML = [
     [eur(PL.prix), 'Plancher (coûts)', `Marge nulle sur chaque ${G200} g : (fabrication ${eur(h.FABRICATION_KG * G200 / 1000)} + emballage ${eur(h.EMB_200)}) ÷ (1 − ${fmt(h.AUTRES_FRAIS, 2)}) = ${eur(PL.v)} à recevoir, ÷ (1 − ${fmt(h.MARGE_DISTRIB, 2)}) × ${fmt(1 + h.TVA, 3)} = ${eur(PL.prix)} en magasin. Coûts estimés.`, 'ko'],
     [eur(h.PRIX_200), 'Prix retenu', `Tendance des concurrents (${eur(T_TOUS.prix)}, <a href="format-familial.html">Le prix du ${G200} g</a>) et écart de ${pct(ecArr(r.ecart))} au kilo qui fait choisir le ${G200} g (<a href="client.html">questionnaire</a>).`, 'ok'],
-    [eur(PLAFOND), 'Plafond (même prix au kilo)', `${fmt(KG85)} €/kg × ${fmt(G200 / 1000, 1)} kg (${L_RELEVE()}). Au-delà, le ${G200} g serait plus cher au kilo que le 85 g : seuls ${pcta(partArr(VERSIONS.find(v => v.id === 'A')))} le choisissent à prix au kilo égal.`, '']
+    [eur(PLAFOND), 'Plafond (même prix au kilo)', `${fmt(KG85)} €/kg × ${fmt(G200 / 1000, 1)} kg (${L_RELEVE()}). Au-delà, le ${G200} g serait plus cher au kilo que le 85 g : seuls ${pcta(partArr(VERSIONS.find(v => v.id === 'A')))} le choisissent à prix au kilo égal.`, '']
   ].map(([v, l, t, c]) => `<div class="card kpi" style="box-shadow:none;border:1px solid var(--line)"><div class="v ${c}">${v}</div><div class="l"><b>${l}</b></div><div class="s">${t}</div></div>`).join('');
 
   // seuil
@@ -153,13 +153,13 @@ function calc() {
     $('seuilTxt').textContent = `Avec ces hypothèses, chaque ${G200} g vendu fait perdre plus de marge (85 g non vendus) qu'il n'en rapporte.`;
   } else {
     $('seuil').textContent = nb(r.seuil) + ' sachets de ' + G200 + ' g par an';
-    $('seuilTxt').innerHTML = `${nb(h.COUTS_FIXES)} € de coûts fixes ÷ ${eur(r.gain)} de marge gagnée par ${G200} g. Soit ${nb(r.seuil * G200 / 1000)} kg de chips et ${nb(r.seuil * h.PRIX_200)} € de chiffre d'affaires en magasin.`;
+    $('seuilTxt').innerHTML = `${nb(h.COUTS_FIXES)} € de coûts fixes ÷ ${eur(r.gain)} de marge gagnée par ${G200} g. Soit ${nb(r.seuil * G200 / 1000)} kg de chips et ${nb(r.seuil * h.PRIX_200)} € de chiffre d'affaires en magasin.`;
   }
   const mes = r.pm.exacte ? `version ${r.pm.version.id}` : 'écart non mesuré';
   $('kPartMin').textContent = isFinite(r.partMin) ? pcta(r.partMin, 1) : '–';
   $('kPart').innerHTML = `<span class="${r.part > r.partMin ? 'ok' : 'ko'}">${pcta(r.part)}</span> <span class="note">(${mes})</span>`;
   $('res').innerHTML = `<span class="${cls(r.resultat)}">${sg(r.resultat)}</span>`;
-  $('resTxt').textContent = `Résultat du lancement sur un an : ${nb(r.volume)} sachets de ${G200} g attendus × ${eur(r.gain)} − ${nb(h.COUTS_FIXES)} €`;
+  $('resTxt').textContent = `Résultat du lancement sur un an : ${nb(r.volume)} sachets de ${G200} g attendus × ${eur(r.gain)} − ${nb(h.COUTS_FIXES)} €`;
 
   // b) étapes
   const a = r.a, b = r.b;

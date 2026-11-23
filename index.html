@@ -86,7 +86,7 @@ document.getElementById('kpis').innerHTML = [
   [eur(PRIX85), 'Prix moyen du Vico 85 g', `${eur(KG85)}/kg, ${L_RELEVE()}`],
   [eur(CONFIG.PRIX_200), `Prix retenu pour le ${G200} g`, `${pct(ecArr(R.ecart))} au kilo ; tendance des concurrents : ${eur(T_TOUS.prix)}`],
   [pcta(R.part), `Choisissent le ${G200} g`, `à ${pct(ecArr(R.pm.version.ecart))} au kilo (version ${R.pm.version.id}, ${L_QUEST('questionnaire')})`],
-  [nb(R.seuil), 'Seuil de rentabilité (sachets par an)', `<span class="${R.resultat >= 0 ? 'ok' : 'ko'}">résultat prévu ${R.resultat >= 0 ? '+' : '−'}${nb(Math.abs(R.resultat))} €</span>`]
+  [nb(R.seuil), 'Seuil de rentabilité (sachets par an)', `<span class="${R.resultat >= 0 ? 'ok' : 'ko'}">résultat prévu ${R.resultat >= 0 ? '+' : '−'}${nb(Math.abs(R.resultat))} €</span>`]
 ].map(([a, b, c]) => `<div class="card kpi"><div class="v">${a}</div><div class="l">${b}</div><div class="s">${c}</div></div>`).join('');
 </script>
 </body>

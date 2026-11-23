@@ -95,13 +95,13 @@ document.getElementById('tRatios').innerHTML = `<tr><th>Ratio</th><th>Formule</t
 const mnMoy = mean(R.mn), croissTot = COMPTES.ca[last] / COMPTES.ca[0] - 1;
 document.getElementById('lecture').innerHTML = [
   `<b>En croissance</b> : le chiffre d'affaires passe de ${COMPTES.ca[0]} à ${COMPTES.ca[last]} M€ entre ${A[0]} et ${A[last]} (${pct(croissTot, 0)}), avec un ralentissement en ${A[last]} (${pct(R.croissance[last], 1)}).`,
-  `<b>Rentable, mais avec une faible marge</b> : environ ${fmt(Math.round(mnMoy * 100), 0)} % de marge nette en moyenne (${R.mn.map(x => fmt(x * 100, 1) + ' %').join(', ')}). Sur 100 € vendus, il reste environ ${fmt(mnMoy * 100, 0)} € de bénéfice.`,
-  `<b>Solide</b> : les fonds propres financent ${fmt(R.af[last] * 100, 0)} % du bilan en ${A[last]} et la dette financière est quasi nulle. Les fonds propres baissent un peu (${COMPTES.fp[0]} → ${COMPTES.fp[last]} M€), sans doute des dividendes versés au groupe, ce qu'il faudrait vérifier dans les comptes.`
+  `<b>Rentable, mais avec une faible marge</b> : environ ${fmt(Math.round(mnMoy * 100), 0)} % de marge nette en moyenne (${R.mn.map(x => fmt(x * 100, 1) + ' %').join(', ')}). Sur 100 € vendus, il reste environ ${fmt(mnMoy * 100, 0)} € de bénéfice.`,
+  `<b>Solide</b> : les fonds propres financent ${fmt(R.af[last] * 100, 0)} % du bilan en ${A[last]} et la dette financière est quasi nulle. Les fonds propres baissent un peu (${COMPTES.fp[0]} → ${COMPTES.fp[last]} M€), sans doute des dividendes versés au groupe, ce qu'il faudrait vérifier dans les comptes.`
 ].map(x => `<li>${x}</li>`).join('');
 
 const mnDer = R.mn[last], baisse10 = 0.10 * COMPTES.ca[last], rexApres = COMPTES.rex[last] - baisse10;
 document.getElementById('ecMn').textContent = eur(mnDer * 100) + ` en ${A[last]}`;
-document.getElementById('pourNous').innerHTML = `Sur 100 € de ventes, il reste environ <b>${fmt(mnDer * 100, 2)} €</b> de résultat net en ${A[last]} (${COMPTES.rn[last]} ÷ ${COMPTES.ca[last]}). ` +
+document.getElementById('pourNous').innerHTML = `Sur 100 € de ventes, il reste environ <b>${fmt(mnDer * 100, 2)} €</b> de résultat net en ${A[last]} (${COMPTES.rn[last]} ÷ ${COMPTES.ca[last]}). ` +
   `Une baisse de prix de 10 % à volume constant retire ${fmt(baisse10, 0)} M€ de chiffre d'affaires (10 % × ${COMPTES.ca[last]}) sans baisser les coûts : le résultat d'exploitation passerait de ${COMPTES.rex[last]} à <b>${fmt(rexApres, 0)} M€</b>, ${rexApres < 0 ? 'donc en perte' : 'encore positif'}. ` +
   `Le ${G200} g doit donc être moins cher au kilo que le 85 g, mais <b>juste ce qu'il faut</b> : on vise l'écart qui déclenche la demande (<a href="client.html">mesuré dans notre questionnaire</a>), pas plus. Voir <a href="format-familial.html">Le prix du ${G200} g</a>.`;
 

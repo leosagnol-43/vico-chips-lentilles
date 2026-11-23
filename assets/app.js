@@ -59,8 +59,8 @@ function valeurs(r = modele(), h = CONFIG) {
     ecartB: pcta(ecArr(V('B').ecart)), ecartC: pcta(ecArr(V('C').ecart)),
     v200: eur(r.a.v), ht200: eur(r.a.ht), distrib: eur(r.a.ht - r.a.v), tva: eur(r.a.prix - r.a.ht), fab200: eur(r.a.fab), emb200: eur(r.a.emb), autres200: eur(r.a.autres),
     m200: eur(r.a.m), m85: eur(r.b.m), can: fmt(h.CANNIBALISATION, 1), perte85: eur(h.CANNIBALISATION * r.b.m), gain: eur(r.gain),
-    cf: nb(h.COUTS_FIXES) + ' €', seuil: nb(r.seuil), seuilk: nb(Math.round(r.seuil / 1000) * 1000), volume: nb(r.volume), pmin: pcta(r.partMin, 1), part: pcta(r.part),
-    resultat: (r.resultat >= 0 ? '+' : '−') + nb(Math.abs(r.resultat)) + ' €', cumul3: (r.cumul3 >= 0 ? '+' : '−') + nb(Math.abs(r.cumul3)) + ' €',
+    cf: nb(h.COUTS_FIXES) + ' €', seuil: nb(r.seuil), seuilk: nb(Math.round(r.seuil / 1000) * 1000), volume: nb(r.volume), pmin: pcta(r.partMin, 1), part: pcta(r.part),
+    resultat: (r.resultat >= 0 ? '+' : '−') + nb(Math.abs(r.resultat)) + ' €', cumul3: (r.cumul3 >= 0 ? '+' : '−') + nb(Math.abs(r.cumul3)) + ' €',
     mois: fmt(r.moisRemb, 1), secu: pcta(1 - r.seuil / r.volume, 1), magsem: fmt(r.parMagSem, 1), n: VERSIONS.reduce((s, v) => s + v.n, 0),
     nmag: DATA.magasins.length, nvil: DATA.villes.length, ncomp: T_TOUS.n, ratio: fmt(G200 / G85, 2)
   };
@@ -96,9 +96,9 @@ const L_QUEST = (txt = 'questionnaire du 15 au 20/10/2026') => `<a href="client.
 
 /* Formatage */
 const fmt = (x, d = 2) => x == null || isNaN(x) ? '–' : x.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
-const eur = (x, d = 2) => x == null || isNaN(x) ? '–' : fmt(x, d) + ' €';
-const pcta = (x, d = 0) => x == null || isNaN(x) ? '–' : fmt(Math.abs(x) * 100, d) + ' %';
-const pct = (x, d = 0) => x == null || isNaN(x) ? '–' : (x > 0 ? '+' : '') + fmt(x * 100, d) + ' %';
+const eur = (x, d = 2) => x == null || isNaN(x) ? '–' : fmt(x, d) + ' €';
+const pcta = (x, d = 0) => x == null || isNaN(x) ? '–' : fmt(Math.abs(x) * 100, d) + ' %';
+const pct = (x, d = 0) => x == null || isNaN(x) ? '–' : (x > 0 ? '+' : '') + fmt(x * 100, d) + ' %';
 
 /* Accès aux données */
 const prod = id => DATA.produits.find(p => p.id === id);
