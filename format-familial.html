@@ -25,11 +25,18 @@
   <h1>Le prix du <span class="g200"></span></h1>
   <p class="lead" id="intro"></p>
 
+  <div class="encart"><span class="titre">En clair</span><p>Un grand paquet doit être <b>moins cher au kilo</b> que le petit, sinon personne ne le prend. Trois prix encadrent donc le <b data-v="g200"></b> :</p>
+    <ul>
+      <li><b>Le plafond (<b data-v="plafond"></b>)</b> vient du <b>prix du 85 g</b> : c'est le prix où le <b data-v="g200"></b> coûterait autant au kilo que le petit sachet. Au-dessus, il n'a plus d'intérêt.</li>
+      <li><b>Le prix logique (<b data-v="tendance"></b>, arrondi à <b data-v="p200"></b>)</b> vient des <b>concurrents</b> : quand ils passent à un grand paquet, ils baissent le prix au kilo d'environ <b data-v="baisse"></b>.</li>
+      <li><b>Le plancher (<b data-v="plancher"></b>)</b> vient des <b>coûts</b> de Vico : en dessous, chaque paquet vendu fait perdre de l'argent.</li>
+    </ul></div>
   <div class="grid g4" id="kpis"></div>
 
   <div class="card">
     <h2>Plancher, prix retenu, plafond</h2>
     <div class="echelle" id="echelle"></div>
+    <div class="encart"><span class="titre">Comment lire ?</span><p>La barre va de 0 € à droite du plafond. Tout ce qui est entre le trait rouge (plancher) et le trait orange (plafond) est possible. Le prix retenu (<b data-v="p200"></b>) est là où les concurrents placeraient leur propre grand format.</p></div>
     <p class="note" id="noteEchelle"></p>
   </div>
 
@@ -58,6 +65,7 @@
     <div class="card">
       <h2>Plus le format est grand, plus le kilo baisse</h2>
       <div class="chart sm"><canvas id="cScatter"></canvas></div>
+      <div class="encart"><span class="titre">Comment lire ?</span><p>Chaque point bleu est un concurrent dans un magasin. Plus le point est à droite, plus son grand paquet est lourd par rapport au petit ; plus il est bas, plus le kilo baisse. La ligne pointillée est la tendance moyenne : pour un paquet <b data-v="ratio"></b> fois plus lourd (85 g → 200 g), elle donne environ −<b data-v="baisse"></b>.</p></div>
       <p class="note" id="noteScatter"></p>
     </div>
     <div class="card">
