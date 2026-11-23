@@ -36,15 +36,15 @@ const RESULTATS = {
   ],
 
   // Gabor-Granger : le 200 g présenté SEUL (sans le 85 g), « l'achèteriez-vous à ce prix ? » (n = 130).
-  // Prix calés sur le prix moyen du 85 g en grande surface (1,80 €, relevé du 01/10/2026).
+  // Prix absolus réellement proposés : ils ne dépendent pas du prix du 85 g.
   gaborGranger: [
-    { prix: 2.35, oui: 29 },
-    { prix: 2.69, part: 0.10 },
-    { prix: 2.99, part: 0.02 },
-    { prix: 3.35, part: 0 },
-    { prix: 3.69, part: 0 },
-    { prix: 3.99, part: 0 },
-    { prix: 4.35, part: 0 }
+    { prix: 3.49, oui: 29 },
+    { prix: 3.99, part: 0.10 },
+    { prix: 4.49, part: 0.02 },
+    { prix: 4.99, part: 0 },
+    { prix: 5.49, part: 0 },
+    { prix: 5.99, part: 0 },
+    { prix: 6.49, part: 0 }
   ],
 
   // Qui choisit le 200 g (calculé sur 132 répondants, à mettre à jour sur 130)
