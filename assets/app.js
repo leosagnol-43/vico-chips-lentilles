@@ -39,6 +39,7 @@ function nav() {
   filEtapes(here);
   remplirValeurs();
   listeASourcer();
+  animations();
   const f = document.createElement('footer');
   f.innerHTML = `Projet étudiant · M1 Marketing, IAE Clermont Auvergne · cours « Prix et budgets marketing » · Prix relevés le <a href="methodologie.html#releve">${DATA.date}</a> sur les sites drive de Carrefour, Auchan, E.Leclerc et Intermarché · Groupe : Souilmi, Moulin, Charras, Bousselham, Sagnol`;
   document.querySelector('.wrap').append(f);
@@ -276,3 +277,60 @@ function erfc(x) {
 }
 function pKhi2(x, ddl) { return ddl === 2 ? Math.exp(-x / 2) : ddl === 1 ? erfc(Math.sqrt(x / 2)) : NaN; }
 const fp = p => p < 0.001 ? 'p < 0,001' : 'p = ' + fmt(p, p < 0.01 ? 4 : 2);
+
+/* =====================================================================
+   ANIMATIONS (désactivées si le système demande de réduire les animations)
+   1. les cartes apparaissent au défilement ;
+   2. les chiffres clés défilent de 0 jusqu'à leur valeur ;
+   3. l'échelle plancher / prix / plafond se remplit, puis les repères tombent.
+   Sans JavaScript, tout reste visible : l'état « caché » n'existe que sous html.anim.
+   ===================================================================== */
+function animations() {
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.classList.add('anim');
+  // toutes les cartes « de premier niveau » (pas celles posées dans une autre carte), les encarts hors carte, le fil, l'échelle
+  const blocs = [...document.querySelectorAll('.wrap .card, .wrap .encart, .fil, .echelle')].filter(b => b.matches('.fil, .echelle') || !b.parentElement.closest('.card'));
+  blocs.forEach(b => b.classList.add('reveal'));
+  // décalage léger entre les cartes d'une même grille
+  document.querySelectorAll('.wrap .grid').forEach(g => [...g.children].forEach((c, i) => { if (c.classList.contains('reveal')) c.style.transitionDelay = (i * 0.08) + 's'; }));
+  // repères de l'échelle : tombent l'un après l'autre
+  document.querySelectorAll('.echelle').forEach(e => [...e.querySelectorAll('.m, .lab')].forEach((m, i) => { m.style.transitionDelay = (0.7 + Math.floor(i / 2) * 0.18) + 's'; }));
+  const obs = new IntersectionObserver(entrees => entrees.forEach(en => {
+    if (!en.isIntersecting) return;
+    en.target.classList.add('vu');
+    obs.unobserve(en.target);
+    en.target.querySelectorAll('.kpi .v, .big').forEach(compter);
+    if (en.target.matches('.kpi')) en.target.querySelectorAll('.v').forEach(compter);
+  }), { threshold: 0.12 });
+  blocs.forEach(b => obs.observe(b));
+}
+
+/* Fait défiler chaque nombre d'un élément de 0 à sa valeur, en gardant le format (1,80 € ; 192 662 ; 52 %) */
+function compter(el) {
+  if (el.dataset.compte) return;
+  el.dataset.compte = '1';
+  const re = /\d{1,3}(?:[   ]\d{3})+(?:,\d+)?|\d+(?:,\d+)?/g;
+  const noeuds = [];
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  while (w.nextNode()) if (re.test(w.currentNode.nodeValue)) noeuds.push(w.currentNode), re.lastIndex = 0;
+  if (!noeuds.length) return;
+  const finals = noeuds.map(n => n.nodeValue);
+  const rendu = (txt, k) => txt.replace(re, s => {
+    const dec = (s.split(',')[1] || '').length, grp = /[   ]/.test(s);
+    const v = parseFloat(s.replace(/[   ]/g, '').replace(',', '.')) * k;
+    return v.toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: grp });
+  });
+  const debut = performance.now(), duree = 1100;
+  let ecrits = finals.slice();
+  const pas = t => {
+    // si la page a réécrit le texte entre-temps (curseurs), on arrête
+    if (noeuds.some((n, i) => n.nodeValue !== ecrits[i])) return;
+    const p = Math.min(1, (t - debut) / duree), k = 1 - Math.pow(1 - p, 3);
+    ecrits = finals.map(f => p < 1 ? rendu(f, k) : f);
+    noeuds.forEach((n, i) => n.nodeValue = ecrits[i]);
+    if (p < 1) requestAnimationFrame(pas);
+  };
+  requestAnimationFrame(pas);
+  // sécurité : les valeurs exactes sont toujours affichées à la fin, même si le navigateur a ralenti l'animation
+  setTimeout(() => { if (noeuds.every((n, i) => n.nodeValue === ecrits[i])) noeuds.forEach((n, i) => n.nodeValue = finals[i]); }, duree + 400);
+}
