@@ -74,8 +74,8 @@
   </div>
 
   <div class="card" id="a-sourcer">
-    <h2>Toutes les sources à ajouter</h2>
-    <p class="note">Chaque marqueur <span class="a-sourcer">[source à ajouter]</span> du site, page par page. Chaque page en affiche aussi la liste en bas. Les autres pages (accueil, prix du 200 g, client) n'en contiennent pas.</p>
+    <h2>Sources et estimations</h2>
+    <p>Tous les chiffres du site ont une source en lien, sauf sept hypothèses de coûts et de volume pour lesquelles nous n’avons trouvé aucune source publique : marge du distributeur, coût de fabrication, emballage, autres frais, coûts fixes du lancement, cannibalisation et volume de référence. Ce sont <b>nos estimations</b>, signalées comme telles sur la page <a href="decision.html#hypotheses">La décision</a> et testées dans le stress test.</p>
     <ul id="lASourcer"></ul>
   </div>
 </div>
@@ -91,8 +91,6 @@ document.getElementById('lQuest').innerHTML = [
   `<b>Questions</b> : choix entre les deux paquets, contrôle de perception du prix au kilo, Gabor-Granger sur le ${G200} g seul, profil (âge, foyer, habitudes d'achat).`
 ].map(x => `<li>${x}</li>`).join('');
 const AS = [
-  ['entreprise.html', "L'entreprise", ['Fonds propres et total du bilan (Xerfi seulement) à vérifier sur les comptes déposés (Pappers), sous le tableau des comptes.']],
-  ['decision.html#hypotheses', 'La décision', ['Hypothèses : marge du distributeur, coût de fabrication, emballage, autres frais, coûts fixes du lancement, cannibalisation, volume de référence.']]
 ];
 document.getElementById('lASourcer').innerHTML = AS.map(([h, t, l]) => `<li><a href="${h.includes("#") ? h : h + "#a-sourcer-liste"}">${t}</a><ul>${l.map(x => `<li>${x}</li>`).join('')}</ul></li>`).join('');
 document.querySelectorAll('.d').forEach(e => e.textContent = DATA.date);
