@@ -22,8 +22,7 @@ Périmètre : la grande surface (Carrefour, Auchan, E.Leclerc, Intermarché), à
 | `decision.html` | Plancher / prix / plafond, marge, seuil de rentabilité, stress test, alternative à 3,99 €, recommandation |
 | `methodologie.html` | Relevé, questionnaire, modèle, usage de l'IA, sources à ajouter |
 | `rentabilite.html` | Redirige vers `decision.html` |
-| `questionnaire/` | Version recalée sur les prix de grande surface (démonstration, n'enregistre rien) |
-| `questionnaire/original/` | Questionnaire d'origine, sur lequel les réponses ont été collectées (clos le 20/10/2026) |
+| `questionnaire/` | Le questionnaire (85 g à 1,80 € ; 200 g à 4,24 / 3,69 / 3,35 €), clos le 20/10/2026 |
 
 ## Données et paramètres
 

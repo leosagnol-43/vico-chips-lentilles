@@ -182,8 +182,8 @@ function tendance(filtre = () => true) {
 const T_TOUS = tendance();
 const T_CHIPS = tendance(x => /chips/i.test(x.petit.nom));
 
-/* Versions testées dans le questionnaire : écart au kilo recalculé sur les prix de la collecte */
-const VERSIONS = RESULTATS.versions.map(v => ({ ...v, ecart: ecartKg(v.prix200, RESULTATS.prix85), ecartGS: ecartKg(v.prixGS, RESULTATS.prix85GS), part: v.choix200 / v.n }));
+/* Versions testées dans le questionnaire : écart au kilo calculé sur les prix affichés */
+const VERSIONS = RESULTATS.versions.map(v => ({ ...v, ecart: ecartKg(v.prix200, RESULTATS.prix85), part: v.choix200 / v.n }));
 const partArr = v => Math.round(v.part * 100) / 100;   // part arrondie au point, comme affichée
 const ecArr = e => Math.round(e * 100) / 100;          // écart arrondi au point
 

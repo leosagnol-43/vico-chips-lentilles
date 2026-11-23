@@ -84,7 +84,7 @@ img.zoom{cursor:zoom-in}
 </head>
 <body>
 <div class="wrap">
-  <div style="background:#e3eefb;border:1px solid #9cc0ea;color:#0d4a8f;padding:10px 14px;border-radius:10px;font-weight:600;margin-bottom:14px">Mode démonstration : le questionnaire est clos, aucune réponse n'est enregistrée.</div>
+  <div style="background:#fff3cd;border:1px solid #f0c36d;color:#7a5200;padding:10px 14px;border-radius:10px;font-weight:600;margin-bottom:14px">Questionnaire clos le 20/10/2026. Cette page est conservée en archive : les réponses ne sont plus enregistrées. Résultats : <a href="../client.html">Le client</a>.</div>
   <div class="test" id="testBanner">Mode test : les réponses sont enregistrées avec le statut « test », à écarter de l'analyse.</div>
   <div class="bar"><i id="prog"></i></div>
 
@@ -282,19 +282,18 @@ img.zoom{cursor:zoom-in}
     <p>Ce questionnaire s'adresse aux personnes majeures qui achètent des chips ou des biscuits apéritifs. Merci quand même pour votre temps !</p>
   </section>
 
-  <div id="lightbox" role="dialog" aria-label="Photo du paquet agrandie"><button type="button" aria-label="Fermer">×</button><img alt="Paquet de chips de lentilles Vico agrandi"></div>
-  <p class="muted" style="font-size:12px;text-align:center;margin-top:24px">Version recalée sur les prix moyens en grande surface (<a href="../methodologie.html#releve">relevé du 01/10/2026</a>). Les réponses analysées ont été collectées sur la version d'origine, avec les mêmes écarts de prix au kilo. <a href="original/">Voir la version d'origine</a>.</p>
+  <div id="lightbox" role="dialog" aria-label="Photo du paquet agrandie"><button type="button" aria-label="Fermer">×</button><img alt="Paquet de chips de lentilles Vico agrandi"></div>
 </div>
 
 <script>
 /* ================= Réglages ================= */
 // Adresse du script Google Apps Script qui enregistre les réponses dans Google Sheets.
-// Version recalée, mode démonstration : aucun envoi de réponses.
+// Questionnaire clos le 20/10/2026 : archive, plus aucun envoi de réponses.
 const ENDPOINT = '';
-const IMAGE = 'original/paquet-B.jpg';                                   // photo officielle du sachet (vico.fr)
+const IMAGE = 'paquet-B.jpg';                                   // photo officielle du sachet (vico.fr)
 const PRIX_85 = 1.80;                                           // prix moyen en grande surface, relevé du 01/10/2026 (21,18 €/kg)
-const PRIX_200 = { A: 4.24, B: 3.69, C: 3.35 };                 // mêmes écarts au kilo que l'original : 0 %, −13 %, −21 %
-const PRIX_GG = [3.49, 3.99, 4.49, 4.99, 5.49, 5.99, 6.49];     // ordre fixe : du moins cher au plus cher ; arrêt au premier « Non »
+const PRIX_200 = { A: 4.24, B: 3.69, C: 3.35 };                 // même prix au kilo, −13 %, −21 %
+const PRIX_GG = [2.35, 2.69, 2.99, 3.35, 3.69, 3.99, 4.35];     // ordre fixe : du moins cher au plus cher ; arrêt au premier « Non »
 const FORMATS = [
   ['petit', 'Petit sachet', 'moins de 100 g', 22],
   ['classique', 'Sachet classique', '100 à 150 g', 34],

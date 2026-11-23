@@ -65,7 +65,7 @@
       <h2>Le <span class="g200"></span> seul (Gabor-Granger)</h2>
       <div class="chart sm"><canvas id="cGG"></canvas></div>
       <p id="ggTxt"></p>
-      <div class="encart"><span class="titre">En clair</span><p>Présenté <b>seul</b>, sans le petit sachet à côté, le <b data-v="g200"></b> n'attire pas grand monde dès qu'il dépasse 4 €. Cela confirme qu'il faut rester sous 4 €, comme <b data-v="p200"></b>.</p></div>
+      <div class="encart"><span class="titre">En clair</span><p>Présenté <b>seul</b>, sans le petit sachet à côté, le <b data-v="g200"></b> ne trouve presque pas preneur : <span id="gg0"></span>. Il ne se vend donc pas « pour lui-même » : il se vend <b>parce qu'il est moins cher au kilo que le 85 g posé à côté</b>. C'est pour cela que notre prix repose sur le test A/B/C.</p></div>
     </div>
     <div class="card">
       <h2>« L'achèteriez-vous ? » n'est pas « lequel prendriez-vous ? »</h2>
@@ -95,7 +95,7 @@
 <script>
 const R = RESULTATS, Nt = R.nettoyage;
 document.querySelectorAll('.g200').forEach(e => e.textContent = G200 + ' g');
-const LQ = (t, u = R.urlOriginal) => `<a href="${u}">${t}</a>`;
+const LQ = (t, u = R.url) => `<a href="${u}">${t}</a>`;
 const n = VERSIONS.reduce((s, v) => s + v.n, 0);
 const V = id => VERSIONS.find(v => v.id === id);
 const pc = (a, b) => pcta(a / b);
@@ -104,18 +104,18 @@ const M = modele();
 
 document.getElementById('intro').innerHTML = `Quel écart de prix au kilo entre le 85 g et le ${G200} g fait choisir le grand format ? <span class="tag t-constate">Constaté</span> : réponses au ${LQ('questionnaire')} (collecte du ${R.collecte.debut} au ${R.collecte.fin}, ${n} réponses analysées, Google Sheet « Chips vico », onglet Réponses). <span class="tag t-estime">Calculé</span> : pourcentages et khi² recalculés ici à partir des effectifs.`;
 document.getElementById('qPosee').textContent = R.question;
-document.getElementById('methode').innerHTML = `On montre le sachet de 85 g à côté du ${G200} g, dont le prix est <b>tiré au sort</b> selon trois écarts au kilo : même prix au kilo (A), ${pct(ecArr(V('B').ecart))} (B) et ${pct(ecArr(V('C').ecart))} (C). Les réponses ont été collectées sur la ${LQ('version d\'origine')} du questionnaire (85 g affiché à ${eur(R.prix85)}). Une ${LQ('version recalée', R.urlRecale)} reprend les mêmes écarts au kilo avec les prix moyens de la grande surface (85 g à ${eur(R.prix85GS)}, ${L_RELEVE()}) : ce sont ces prix qui figurent dans le tableau.`;
+document.getElementById('methode').innerHTML = `On montre le sachet de 85 g à côté du ${G200} g, dont le prix est <b>tiré au sort</b> selon trois écarts au kilo : même prix au kilo (A), ${pct(ecArr(V('B').ecart))} (B) et ${pct(ecArr(V('C').ecart))} (C). Le 85 g est affiché à <b>${eur(R.prix85)}</b>, son prix moyen en grande surface (${L_RELEVE()}), et le ${G200} g à ${VERSIONS.map(v => eur(v.prix200) + ' (' + v.id + ')').join(', ')}. Voir le ${LQ('questionnaire')}.`;
 
 /* Tableau central */
 const kd = khi2(VERSIONS.map(v => [v.choix200, v.n - v.choix200]));
 const pair = (x, y) => khi2([[V(x).choix200, V(x).n - V(x).choix200], [V(y).choix200, V(y).n - V(y).choix200]]);
 const ab = pair('A', 'B'), ac = pair('A', 'C'), bc = pair('B', 'C');
-document.getElementById('tCentral').innerHTML = `<tr><th>Version</th><th class="n">Écart au kilo</th><th class="n">Prix grande surface (recalé)</th><th class="n">Choisissent le ${G200} g</th></tr>` +
-  VERSIONS.map(v => `<tr${v.prixGS === CONFIG.PRIX_200 ? ' class="vico"' : ''}><td>${v.id}${v.prixGS === CONFIG.PRIX_200 ? ' (prix retenu)' : ''}</td><td class="n">${ecTxt(v)}</td><td class="n">${eur(v.prixGS)}</td><td class="n"><b>${pc(v.choix200, v.n)}</b> (${v.choix200}/${v.n})</td></tr>`).join('');
-document.getElementById('tests').innerHTML = `<p>Différence entre les trois versions : khi² = ${fmt(kd.x, 2)} ; ${fp(kd.p)} ; V de Cramér = ${fmt(kd.V, 2)}.</p><p>Par paires : A contre B ${fp(ab.p)} (puissance ${pcta(R.paires.puissanceAB)}) ; A contre C ${fp(ac.p)} ; B contre C ${fp(bc.p)}, non significatif (avec ces effectifs, on ne pouvait détecter qu'un écart d'au moins ${fmt(R.paires.ecartMinDetectableBC * 100, 0)} points).</p><p class="note">Prix recalés : version recalée du questionnaire ; 85 g à ${eur(R.prix85GS)}. Écarts au kilo calculés sur les prix de la version d'origine (A ${eur(V('A').prix200)}, B ${eur(V('B').prix200)}, C ${eur(V('C').prix200)} face à ${eur(R.prix85)}).</p>`;
+document.getElementById('tCentral').innerHTML = `<tr><th>Version</th><th class="n">Écart au kilo</th><th class="n">Prix du ${G200} g</th><th class="n">Choisissent le ${G200} g</th></tr>` +
+  VERSIONS.map(v => `<tr${v.prix200 === CONFIG.PRIX_200 ? ' class="vico"' : ''}><td>${v.id}${v.prix200 === CONFIG.PRIX_200 ? ' (prix retenu)' : ''}</td><td class="n">${ecTxt(v)}</td><td class="n">${eur(v.prix200)}</td><td class="n"><b>${pc(v.choix200, v.n)}</b> (${v.choix200}/${v.n})</td></tr>`).join('');
+document.getElementById('tests').innerHTML = `<p>Différence entre les trois versions : khi² = ${fmt(kd.x, 2)} ; ${fp(kd.p)} ; V de Cramér = ${fmt(kd.V, 2)}.</p><p>Par paires : A contre B ${fp(ab.p)} (puissance ${pcta(R.paires.puissanceAB)}) ; A contre C ${fp(ac.p)} ; B contre C ${fp(bc.p)}, non significatif (avec ces effectifs, on ne pouvait détecter qu'un écart d'au moins ${fmt(R.paires.ecartMinDetectableBC * 100, 0)} points).</p><p class="note">Écarts au kilo : prix au kilo du ${G200} g (A ${eur(kgDe(V('A').prix200, G200))}, B ${eur(kgDe(V('B').prix200, G200))}, C ${eur(kgDe(V('C').prix200, G200))}) face au 85 g à ${eur(kgDe(R.prix85, G85))}/kg.</p>`;
 new Chart(document.getElementById('cDemande'), {
   type: 'bar',
-  data: { labels: VERSIONS.map(v => `${v.id} : ${ecTxt(v)} (${eur(v.prixGS)})`), datasets: [{ data: VERSIONS.map(v => 100 * v.part), backgroundColor: VERSIONS.map(v => v.prixGS === CONFIG.PRIX_200 ? '#2e7d32' : '#90caf9') }] },
+  data: { labels: VERSIONS.map(v => `${v.id} : ${ecTxt(v)} (${eur(v.prix200)})`), datasets: [{ data: VERSIONS.map(v => 100 * v.part), backgroundColor: VERSIONS.map(v => v.prix200 === CONFIG.PRIX_200 ? '#2e7d32' : '#90caf9') }] },
   options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${fmt(c.raw, 0)} % choisissent le ${G200} g` } } },
     scales: { y: { min: 0, max: 70, title: { display: true, text: `Choisissent le ${G200} g (%)` } } } }
 });
@@ -150,8 +150,10 @@ new Chart(document.getElementById('cGG'), {
 });
 document.getElementById('ggTxt').innerHTML = `Prix proposés un par un, du moins cher au plus cher, au ${G200} g présenté seul (${n} répondants, ${LQ('questionnaire')}) : ` +
   gg.map(g => `${eur(g.prix)} → <b>${pcta(g.part)}</b>${g.oui != null ? ` (${g.oui}/${n})` : ''}`).join(' ; ') + '.';
-const g4 = gg.filter(g => g.prix > 4);
-document.getElementById('ggConclusion').innerHTML = `<b>Conclusion</b> : au-delà de 4 €, la demande pour le ${G200} g seul s'effondre (${g4.map(g => pcta(g.part)).join(', puis ')}). Cela confirme la fourchette de ${eur(Math.floor(T_TOUS.prix * 10) / 10 - 0.01)} à ${eur(Math.ceil(T_CHIPS.prix * 10) / 10 - 0.01)} tirée des <a href="format-familial.html">prix des concurrents</a> : le prix retenu de ${eur(CONFIG.PRIX_200)} reste sous la barre des 4 €.`;
+const gZero = gg.find(g => g.part === 0), ggRetenu = gg.find(g => Math.abs(g.prix - CONFIG.PRIX_200) < 0.005);
+const ggResume = `${pcta(gg[0].part)} l'achèteraient à ${eur(gg[0].prix)}` + (gZero ? `, et plus personne dès ${eur(gZero.prix)}` : '');
+document.getElementById('gg0').textContent = ggResume;
+document.getElementById('ggConclusion').innerHTML = `<b>Conclusion</b> : présenté seul, le ${G200} g ne trouve presque pas preneur (${ggResume}${ggRetenu && ggRetenu.part > 0 ? `, dont ${pcta(ggRetenu.part)} à ${eur(ggRetenu.prix)}` : ''}). Sa demande ne vient pas de son prix seul, mais de la <b>comparaison avec le 85 g</b> en rayon : quand les deux paquets sont côte à côte, ${pcta(partArr(V('B')))} choisissent le ${G200} g à ${eur(V('B').prix200)}. C'est pourquoi le prix retenu s'appuie sur le test A/B/C, et pourquoi le ${G200} g doit <b>toujours</b> être vendu à côté du 85 g.`;
 
 /* Profils */
 const Pr = R.profils;
@@ -162,13 +164,12 @@ document.getElementById('tProfils').innerHTML = `<tr><th>Profil</th><th class="n
   ['Étudiant', Pr.etudiants, 'Les étudiants choisissent moins le grand format : garder le 85 g pour eux.'],
   ['A remarqué l\'économie au kilo (versions B et C)', Pr.economieVue, `Voir l'économie fait choisir le ${G200} g ; or ${fmt(Pr.economieVue.nePasVoir * 3, 0)} client sur 3 ne la remarque pas : afficher le prix au kilo en grand.`]
 ].map(([l, d, t]) => `<tr><td>${l}</td><td class="n">${pcta(d.oui)}</td><td class="n">${pcta(d.non)}</td><td class="n">${fmt(d.p, d.p < 0.001 ? 5 : d.p < 0.01 ? 4 : 3)}</td><td>${t}</td></tr>`).join('') +
-  `<tr><td>A déjà acheté des chips de lentilles</td><td class="n">${pcta(Pr.dejaAchete.accepte349)}</td><td class="n">${pcta(Pr.dejaAchete.accepte349Non)}</td><td class="n">${fmt(Pr.dejaAchete.p, 4)}</td><td>Part qui accepte le ${G200} g seul à ${eur(R.gaborGranger[0].prix)}. Mais ${pcta(Pr.dejaAchete.jamaisAchete)} n'en ont jamais acheté : le 85 g reste utile pour faire découvrir le produit.</td></tr>`;
+  `<tr><td>A déjà acheté des chips de lentilles</td><td class="n">${pcta(Pr.dejaAchete.accepteGG1)}</td><td class="n">${pcta(Pr.dejaAchete.accepteGG1Non)}</td><td class="n">${fmt(Pr.dejaAchete.p, 4)}</td><td>Part qui accepte le ${G200} g seul à ${eur(R.gaborGranger[0].prix)}. Mais ${pcta(Pr.dejaAchete.jamaisAchete)} n'en ont jamais acheté : le 85 g reste utile pour faire découvrir le produit.</td></tr>`;
 
 document.getElementById('limites').innerHTML = [
   `Ce sont des <b>intentions déclarées</b> : en magasin, la demande réelle sera plus basse.`,
   `Échantillon <b>régional et étudiant</b> (${fmt(R.echantillon.auraPart * 10, 0)} sur 10 en Auvergne-Rhône-Alpes, ${fmt(R.echantillon.etudiantsPart * 10, 0)} sur 10 étudiants).`,
-  `La question de contrôle est posée <b>après</b> le choix : elle peut être influencée par la réponse.`,
-  `Prix <b>recalés</b> sur la grande surface : les réponses ont été collectées avec un 85 g à ${eur(R.prix85)} ; nous supposons que le choix dépend de l'écart au kilo, identique dans les deux versions, et pas du niveau de prix (voir la mention en bas du ${LQ('questionnaire recalé', R.urlRecale)}).`
+  `La question de contrôle est posée <b>après</b> le choix : elle peut être influencée par la réponse.`
 ].map(x => `<li>${x}</li>`).join('');
 </script>
 </body>
