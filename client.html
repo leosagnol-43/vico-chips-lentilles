@@ -18,6 +18,8 @@
   <h1>Ce que dit notre mesure</h1>
   <p class="lead" id="intro"></p>
 
+  <div class="encart"><span class="titre">En clair</span><p>Le prix logique est <b data-v="p200"></b>. Mais à ce prix, <b>les clients prennent-ils vraiment le <b data-v="g200"></b></b> plutôt que le 85 g ? Pour le savoir, on a montré les deux paquets côte à côte à <b data-v="n"></b> personnes, en changeant au hasard le prix du <b data-v="g200"></b>.</p>
+    <p><b>Résultat</b> : quand le <b data-v="g200"></b> est <b data-v="ecartB"></b> moins cher au kilo, <b><b data-v="partB"></b></b> le choisissent, contre <b data-v="partA"></b> quand il n'est pas moins cher au kilo. Le baisser encore plus (<b data-v="ecartC"></b>) n'attire presque personne de plus (<b data-v="partC"></b>). <b data-v="p200"></b> donne justement l'écart qui marche.</p></div>
   <div class="card">
     <h2>La méthode</h2>
     <p id="methode"></p>
@@ -30,6 +32,7 @@
       <h2>Le résultat central</h2>
       <table id="tCentral"></table>
       <div id="tests"></div>
+      <div class="encart"><span class="titre">Comment lire les tests ?</span><p><b>p</b> = la probabilité que la différence soit due au hasard. Sous 0,05, on la considère comme réelle. Ici, entre « même prix au kilo » et « <b data-v="ecartB"></b> », p est bien sous 0,05 : la différence est réelle. Entre <b data-v="ecartB"></b> et <b data-v="ecartC"></b>, p est proche de 1 : pas de différence. Le <b>V de Cramér</b> mesure la force de l'effet (0 = aucun, 1 = total).</p></div>
     </div>
     <div class="card">
       <h2>Part qui choisit le <span class="g200"></span></h2>
@@ -62,6 +65,7 @@
       <h2>Le <span class="g200"></span> seul (Gabor-Granger)</h2>
       <div class="chart sm"><canvas id="cGG"></canvas></div>
       <p id="ggTxt"></p>
+      <div class="encart"><span class="titre">En clair</span><p>Présenté <b>seul</b>, sans le petit sachet à côté, le <b data-v="g200"></b> n'attire pas grand monde dès qu'il dépasse 4 €. Cela confirme qu'il faut rester sous 4 €, comme <b data-v="p200"></b>.</p></div>
     </div>
     <div class="card">
       <h2>« L'achèteriez-vous ? » n'est pas « lequel prendriez-vous ? »</h2>
