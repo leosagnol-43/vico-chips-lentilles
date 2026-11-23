@@ -190,7 +190,7 @@ function calc() {
   const pts = Array.from({ length: 21 }, (_, i) => max * i / 20);
   chRes?.destroy();
   chRes = new Chart($('cRes'), { type: 'line',
-    data: { labels: pts.map(nb), datasets: [{ label: 'Résultat (€)', data: pts.map(v => v * r.gain - h.COUTS_FIXES), borderColor: '#2e7d32', pointRadius: 0, fill: { target: 'origin', above: 'rgba(46,125,50,.12)', below: 'rgba(198,40,40,.12)' } }] },
+    data: { labels: pts.map(nb), datasets: [{ label: 'Résultat (€)', data: pts.map(v => v * r.gain - h.COUTS_FIXES), borderColor: '#3e8e2b', pointRadius: 0, fill: { target: 'origin', above: 'rgba(62,142,43,.14)', below: 'rgba(215,31,38,.12)' } }] },
     options: { animation: false, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + nb(c.raw) + ' €' } } },
       scales: { x: { title: { display: true, text: `Sachets de ${G200} g vendus` }, ticks: { maxTicksLimit: 6 } }, y: { title: { display: true, text: 'Résultat (€)' } } } } });
 

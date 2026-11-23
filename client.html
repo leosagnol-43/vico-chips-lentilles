@@ -115,7 +115,7 @@ document.getElementById('tCentral').innerHTML = `<tr><th>Version</th><th class="
 document.getElementById('tests').innerHTML = `<p>Différence entre les trois versions : khi² = ${fmt(kd.x, 2)} ; ${fp(kd.p)} ; V de Cramér = ${fmt(kd.V, 2)}.</p><p>Par paires : A contre B ${fp(ab.p)} (puissance ${pcta(R.paires.puissanceAB)}) ; A contre C ${fp(ac.p)} ; B contre C ${fp(bc.p)}, non significatif (avec ces effectifs, on ne pouvait détecter qu'un écart d'au moins ${fmt(R.paires.ecartMinDetectableBC * 100, 0)} points).</p><p class="note">Écarts au kilo : prix au kilo du ${G200} g (A ${eur(kgDe(V('A').prix200, G200))}, B ${eur(kgDe(V('B').prix200, G200))}, C ${eur(kgDe(V('C').prix200, G200))}) face au 85 g à ${eur(kgDe(R.prix85, G85))}/kg.</p>`;
 new Chart(document.getElementById('cDemande'), {
   type: 'bar',
-  data: { labels: VERSIONS.map(v => `${v.id} : ${ecTxt(v)} (${eur(v.prix200)})`), datasets: [{ data: VERSIONS.map(v => 100 * v.part), backgroundColor: VERSIONS.map(v => v.prix200 === CONFIG.PRIX_200 ? '#2e7d32' : '#90caf9') }] },
+  data: { labels: VERSIONS.map(v => `${v.id} : ${ecTxt(v)} (${eur(v.prix200)})`), datasets: [{ data: VERSIONS.map(v => 100 * v.part), backgroundColor: VERSIONS.map(v => v.prix200 === CONFIG.PRIX_200 ? '#3e8e2b' : '#b8d88b') }] },
   options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${fmt(c.raw, 0)} % choisissent le ${G200} g` } } },
     scales: { y: { min: 0, max: 70, title: { display: true, text: `Choisissent le ${G200} g (%)` } } } }
 });
@@ -144,7 +144,7 @@ document.getElementById('tComp').innerHTML = `<tr><th>Critère</th><th class="n"
 const gg = R.gaborGranger.map(g => ({ prix: g.prix, part: g.oui != null ? g.oui / n : g.part, oui: g.oui }));
 new Chart(document.getElementById('cGG'), {
   type: 'bar',
-  data: { labels: gg.map(g => eur(g.prix)), datasets: [{ data: gg.map(g => 100 * g.part), backgroundColor: '#90caf9' }] },
+  data: { labels: gg.map(g => eur(g.prix)), datasets: [{ data: gg.map(g => 100 * g.part), backgroundColor: '#b8d88b' }] },
   options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${fmt(c.raw, 0)} % achèteraient` } } },
     scales: { y: { min: 0, title: { display: true, text: `Achèteraient le ${G200} g seul (%)` } } } }
 });

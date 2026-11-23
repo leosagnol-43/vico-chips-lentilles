@@ -98,7 +98,7 @@ document.getElementById('kpis').innerHTML = [
 
 /* Échelle plancher / prix / plafond */
 const xmax = PLAFOND * 1.12, pos = x => (100 * x / xmax).toFixed(2) + '%';
-const marques = [[PL.prix, 'Plancher (coûts)', '#c62828', 'bas'], [PX, 'Prix retenu', '#1d1d1f', 'haut'], [T_TOUS.prix, 'Tendance', '#1565c0', 'bas'], [T_CHIPS.prix, 'Chips seules', '#6a1b9a', 'haut'], [PLAFOND, 'Plafond', '#ef6c00', 'bas']];
+const marques = [[PL.prix, 'Plancher (coûts)', '#d71f26', 'bas'], [PX, 'Prix retenu', '#5b3a1f', 'haut'], [T_TOUS.prix, 'Tendance', '#3e8e2b', 'bas'], [T_CHIPS.prix, 'Chips seules', '#e0a100', 'haut'], [PLAFOND, 'Plafond', '#ef7d00', 'bas']];
 document.getElementById('echelle').innerHTML = `<div class="piste"></div><div class="zone" style="left:${pos(PL.prix)};width:calc(${pos(PLAFOND)} - ${pos(PL.prix)})"></div>` +
   marques.map(([x, l, c, p]) => `<div class="m" style="left:${pos(x)};background:${c}"></div><div class="lab ${p}" style="left:${pos(x)};color:${c}"><b>${eur(x)}</b>${l}</div>`).join('');
 document.getElementById('noteEchelle').innerHTML = `<b>Plancher</b> : prix en dessous duquel Vico perd de l'argent sur chaque ${G200} g (marge nulle, coûts estimés, voir <a href="decision.html#hypotheses">hypothèses</a>). <b>Plafond</b> : au-delà, le ${G200} g serait plus cher au kilo que le 85 g et perdrait son intérêt. Le prix retenu est dans la fourchette logique des concurrents (${eur(prixLogique)} à ${eur(T_CHIPS.prix)}).`;
@@ -138,9 +138,9 @@ document.getElementById('t').innerHTML = `<tr><th>Produit</th><th>Petit format</
 new Chart(document.getElementById('cScatter'), {
   type: 'scatter',
   data: { datasets: [
-    { label: 'Concurrents', data: P.map(x => ({ x: x.ratioTaille, y: 100 * x.baisse, t: `${x.gf.marque} – ${x.enseigne} ${x.ville}` })), backgroundColor: 'rgba(21,101,192,.6)' },
+    { label: 'Concurrents', data: P.map(x => ({ x: x.ratioTaille, y: 100 * x.baisse, t: `${x.gf.marque} – ${x.enseigne} ${x.ville}` })), backgroundColor: 'rgba(91,58,31,.5)' },
     { label: 'Tendance', type: 'line', data: Array.from({ length: 30 }, (_, i) => { const r = 1 + i * .15; return { x: r, y: 100 * T_TOUS.b * Math.log(r) }; }), borderColor: '#888', borderDash: [5, 4], pointRadius: 0 },
-    { label: `Vico ${G200} g à ${eur(PX)}`, data: [{ x: ratioVico, y: 100 * (kg200 / KG85 - 1), t: `Vico ${G200} g à ${eur(PX)}` }], backgroundColor: '#c62828', pointRadius: 8 }
+    { label: `Vico ${G200} g à ${eur(PX)}`, data: [{ x: ratioVico, y: 100 * (kg200 / KG85 - 1), t: `Vico ${G200} g à ${eur(PX)}` }], backgroundColor: '#d71f26', pointRadius: 8 }
   ] },
   options: { maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: c => ` ${c.raw.t || ''} : ${fmt(c.raw.y, 1)} %` } } },
     scales: { x: { title: { display: true, text: 'Grand format / petit format (poids)' } }, y: { title: { display: true, text: 'Écart de prix au kilo (%)' } } } }
@@ -150,7 +150,7 @@ document.getElementById('noteScatter').textContent = `Chaque point bleu = un pro
 const options = [['Plancher (coûts)', PL.prix], ['Prix retenu', PX], ['Tendance (tous)', T_TOUS.prix], ['Tendance (chips)', T_CHIPS.prix], ['Plafond (même €/kg)', PLAFOND]];
 new Chart(document.getElementById('cPrix'), {
   type: 'bar',
-  data: { labels: options.map(o => o[0]), datasets: [{ data: options.map(o => o[1]), backgroundColor: ['#c62828', '#1d1d1f', '#1565c0', '#6a1b9a', '#ef6c00'] }] },
+  data: { labels: options.map(o => o[0]), datasets: [{ data: options.map(o => o[1]), backgroundColor: ['#d71f26', '#5b3a1f', '#3e8e2b', '#e0a100', '#ef7d00'] }] },
   options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + eur(c.raw) } } }, scales: { y: { title: { display: true, text: `Prix du sachet de ${G200} g (€)` } } } }
 });
 document.getElementById('explPrix').innerHTML = `Tous les prix partent du 85 g moyen (${eur(KG85)}/kg, ${lien}). Le plancher vient des coûts estimés (<a href="decision.html#hypotheses">hypothèses</a>), les deux tendances des grands formats des concurrents, le plafond du même prix au kilo.`;
