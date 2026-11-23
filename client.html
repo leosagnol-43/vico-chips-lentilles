@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Le client — Vico chips de lentilles</title>
-<link rel="stylesheet" href="assets/style.css?v=20261123b">
+<link rel="stylesheet" href="assets/style.css?v=20261123c">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="assets/donnees.js?v=20261123b"></script>
-<script src="assets/config.js?v=20261123b"></script>
+<script src="assets/donnees.js?v=20261123c"></script>
+<script src="assets/config.js?v=20261123c"></script>
 <!-- RESULTATS : objet des résultats du questionnaire, source : Google Sheet Chips vico, onglet Réponses.
      Il est dans assets/resultats.js pour que l'accueil et la décision utilisent exactement les mêmes chiffres. -->
-<script src="assets/resultats.js?v=20261123b"></script>
-<script src="assets/app.js?v=20261123b"></script>
+<script src="assets/resultats.js?v=20261123c"></script>
+<script src="assets/app.js?v=20261123c"></script>
 </head>
 <body>
 <div class="wrap">
@@ -65,7 +65,7 @@
       <h2>Le <span class="g200"></span> seul (Gabor-Granger)</h2>
       <div class="chart sm"><canvas id="cGG"></canvas></div>
       <p id="ggTxt"></p>
-      <div class="encart"><span class="titre">En clair</span><p>Présenté <b>seul</b>, sans le petit sachet à côté, le <b data-v="g200"></b> se vend peu : <span id="gg0"></span>. Il se vend surtout <b>parce qu'il est moins cher au kilo que le 85 g posé à côté</b> : dans ce cas, <b data-v="partB"></b> le choisissent. Et au-delà de 4 €, presque plus personne n'en veut : il faut rester en dessous.</p></div>
+      <div class="encart"><span class="titre">En clair</span><p>Présenté <b>seul</b>, sans le petit sachet à côté, le <b data-v="g200"></b> se vend peu : <span id="gg0"></span>. Il se vend surtout <b>parce qu'il est moins cher au kilo que le 85 g posé à côté</b> : dans ce cas, <b data-v="partB"></b> le choisissent. Sans cette comparaison, il ne trouve presque pas preneur : le <b data-v="g200"></b> doit <b>toujours</b> être vendu à côté du 85 g, avec le prix au kilo bien visible.</p></div>
     </div>
     <div class="card">
       <h2>« L'achèteriez-vous ? » n'est pas « lequel prendriez-vous ? »</h2>
@@ -156,7 +156,7 @@ const ggPlage = ggBas && ggHaut && ggBas !== ggHaut ? `entre ${pcta(ggHaut.part)
 document.getElementById('gg0').textContent = gg.filter(g => g.part > 0).map(g => `${pcta(g.part)} à ${eur(g.prix)}`).join(', ') + (gZero ? `, plus personne dès ${eur(gZero.prix)}` : '') + (ggPlage ? ` ; à ${eur(CONFIG.PRIX_200)}, ${ggPlage} l'achèteraient` : '');
 document.getElementById('ggConclusion').innerHTML = `<b>Conclusion</b> : présenté seul, le ${G200} g trouve peu de preneurs (${gg.filter(g => g.part > 0).map(g => `${pcta(g.part)} à ${eur(g.prix)}`).join(', ')}${gZero ? `, puis plus personne dès ${eur(gZero.prix)}` : ''}). ` +
   (ggPlage ? `Notre prix de ${eur(CONFIG.PRIX_200)} se situe entre ${eur(ggBas.prix)} et ${eur(ggHaut.prix)} : seul, ${ggPlage} l'achèteraient. ` : '') +
-  `Quand les deux paquets sont côte à côte, ${pcta(partArr(V('B')))} choisissent le ${G200} g à ${eur(V('B').prix200)} : la demande vient surtout de la <b>comparaison avec le 85 g</b>. Et au-delà de 4 €, la demande pour le ${G200} g seul s'effondre, ce qui confirme la fourchette de ${eur(Math.floor(T_TOUS.prix * 10) / 10 - 0.01)} à ${eur(Math.ceil(T_CHIPS.prix * 10) / 10 - 0.01)} tirée des <a href="format-familial.html">prix des concurrents</a>.`;
+  `Quand les deux paquets sont côte à côte, ${pcta(partArr(V('B')))} choisissent le ${G200} g à ${eur(V('B').prix200)} : sa demande ne vient pas de son prix seul, mais de la <b>comparaison avec le 85 g</b> en rayon. C'est pourquoi le prix retenu s'appuie sur le test A/B/C, et pourquoi le ${G200} g doit <b>toujours</b> être vendu à côté du 85 g.`;
 
 /* Profils */
 const Pr = R.profils;
