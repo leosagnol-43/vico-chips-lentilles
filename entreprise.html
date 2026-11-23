@@ -21,6 +21,7 @@
     <p>Vico est une marque d'<b>Intersnack France</b> (SIREN 412 581 878), dont le siège est à Montigny-Lengrain (Aisne, 02), d'après la <a href="https://www.xerfi.com/etudes-par-entreprise/intersnack-france_412581878" target="_blank" rel="noopener">fiche Xerfi d'Intersnack France</a> (comptes 2022 à 2024). Ces chiffres restent à vérifier sur les comptes officiels déposés : <a href="https://www.pappers.fr/entreprise/412581878" target="_blank" rel="noopener">fiche Pappers, comptes annuels en PDF</a> <span class="a-sourcer">[source à ajouter]</span>.</p>
   </div>
 
+  <div class="encart"><span class="titre">En clair</span><p>Pourquoi regarder les comptes avant de parler prix ? Parce qu'ils disent si Vico peut <b>se permettre de vendre moins cher</b>. Ce qu'il faut retenir : Vico (avec tout son groupe) vend de plus en plus, n'a presque pas de dettes, mais <b>garde peu sur chaque euro vendu</b> (<b id="ecMn"></b> de bénéfice pour 100 € de ventes). Un prix trop bas lui coûterait vite cher.</p></div>
   <div class="grid g2">
     <div class="card scroll">
       <h2>Les comptes d'Intersnack France (en M€)</h2>
@@ -99,6 +100,7 @@ document.getElementById('lecture').innerHTML = [
 ].map(x => `<li>${x}</li>`).join('');
 
 const mnDer = R.mn[last], baisse10 = 0.10 * COMPTES.ca[last], rexApres = COMPTES.rex[last] - baisse10;
+document.getElementById('ecMn').textContent = eur(mnDer * 100) + ` en ${A[last]}`;
 document.getElementById('pourNous').innerHTML = `Sur 100 € de ventes, il reste environ <b>${fmt(mnDer * 100, 2)} €</b> de résultat net en ${A[last]} (${COMPTES.rn[last]} ÷ ${COMPTES.ca[last]}). ` +
   `Une baisse de prix de 10 % à volume constant retire ${fmt(baisse10, 0)} M€ de chiffre d'affaires (10 % × ${COMPTES.ca[last]}) sans baisser les coûts : le résultat d'exploitation passerait de ${COMPTES.rex[last]} à <b>${fmt(rexApres, 0)} M€</b>, ${rexApres < 0 ? 'donc en perte' : 'encore positif'}. ` +
   `Le ${G200} g doit donc être moins cher au kilo que le 85 g, mais <b>juste ce qu'il faut</b> : on vise l'écart qui déclenche la demande (<a href="client.html">mesuré dans notre questionnaire</a>), pas plus. Voir <a href="format-familial.html">Le prix du ${G200} g</a>.`;
