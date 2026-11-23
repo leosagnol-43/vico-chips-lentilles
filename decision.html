@@ -16,6 +16,13 @@
   <h1>La décision : à quel prix, et combien en vendre ?</h1>
   <p class="lead">On calcule la marge de Vico sur chaque <span class="g200"></span>, le nombre de sachets à vendre pour couvrir le lancement, puis on compare aux ventes attendues d'après la <a href="client.html">demande mesurée</a>. Les curseurs partent des valeurs de <code>config.js</code> (<span class="tag t-estime">estimées</span>, voir <a href="#hypotheses">Hypothèses</a>) ; le prix du 85 g vient du <a href="methodologie.html#releve">relevé du <span class="d"></span></a>. Tout se recalcule.</p>
 
+  <div class="encart"><span class="titre">En clair</span><p>Le prix (<b data-v="p200"></b>) et la demande (<b data-v="partB"></b> choisissent le <b data-v="g200"></b>) sont connus. Reste à savoir si <b>Vico gagne de l'argent</b>. On le calcule en trois temps :</p>
+    <ol>
+      <li><b>Combien Vico gagne sur chaque <b data-v="g200"></b></b>, une fois payés le supermarché, la fabrication, l'emballage et les 85 g qu'il ne vend plus : <b><b data-v="gain"></b></b>.</li>
+      <li><b>Combien il faut en vendre</b> pour rembourser les <b data-v="cf"></b> du lancement : <b><b data-v="seuil"></b></b> par an.</li>
+      <li><b>Combien on peut espérer en vendre</b>, d'après le questionnaire : <b><b data-v="volume"></b></b>. C'est à peine plus que le seuil (<b data-v="secu"></b> au-dessus), d'où la prudence.</li>
+    </ol>
+    <p class="note">Bougez les curseurs : ces chiffres se recalculent.</p></div>
   <div class="card">
     <h2>a) Trois prix, trois logiques</h2>
     <div class="grid g3" id="troisPrix"></div>
@@ -60,6 +67,7 @@
 
   <div class="card scroll">
     <h2>b) Le calcul de la marge, étape par étape</h2>
+    <div class="encart"><span class="titre">En clair : où passent les <b data-v="p200"></b> ?</span><p>Le client paie <b data-v="p200"></b>. L'État prend la TVA (<b data-v="tva"></b>), le supermarché garde sa marge (<b data-v="distrib"></b>) : Vico reçoit <b><b data-v="v200"></b></b>. Il paie la fabrication (<b data-v="fab200"></b>), l'emballage (<b data-v="emb200"></b>) et les autres frais (<b data-v="autres200"></b>) : il lui reste <b><b data-v="m200"></b></b> par paquet.</p><p>Mais certains clients prennent le <b data-v="g200"></b> <b>à la place</b> d'un 85 g : on retire donc <b data-v="perte85"></b> (<b data-v="can"></b> × la marge du 85 g, <b data-v="m85"></b>). Gain réel : <b><b data-v="gain"></b></b> par <b data-v="g200"></b> vendu.</p></div>
     <div id="etapes"></div>
     <table id="detail"></table>
   </div>
@@ -68,6 +76,7 @@
     <div class="card scroll">
       <h2>Résultat sur 3 ans</h2>
       <p class="note">Les coûts de lancement ne sont payés qu'en année 1 ; ensuite, chaque année rapporte la marge gagnée sur les ventes attendues (volume et marge supposés constants).</p>
+      <div class="encart"><span class="titre">En clair</span><p>Les <b data-v="cf"></b> de lancement ne se paient qu'une fois, la première année. Ensuite, chaque année rapporte toute la marge. Le projet est presque à zéro la 1<sup>re</sup> année, puis devient clairement rentable.</p></div>
       <table id="t3ans"></table>
       <p id="remb" style="margin-top:12px"></p>
     </div>
@@ -80,6 +89,7 @@
   <div class="card scroll">
     <h2>d) Stress test</h2>
     <p>Et si nous nous trompons ? On refait le calcul en dégradant une hypothèse à la fois, puis plusieurs ensemble.</p>
+    <div class="encart"><span class="titre">En clair</span><p>Le stress test répond à la question : <b>et si on s'est trompé ?</b> Chaque ligne change une seule hypothèse (sauf « Cumul »). En rouge : le projet perd de l'argent la 1<sup>re</sup> année. Regardez aussi la dernière colonne : sur 3 ans, le projet résiste-t-il ?</p><p id="stressClair"></p></div>
     <table id="tStress"></table>
     <p id="stressTxt" style="margin-top:12px"></p>
   </div>
@@ -123,6 +133,7 @@ function lireH() { const h = { ...CONFIG }; SL.forEach(([id, k, f]) => h[k] = +$
 
 function calc() {
   const h = lireH(), r = modele(h), PL = plancher(h);
+  remplirValeurs(r, h);
   $('v_p200').textContent = eur(h.PRIX_200);
   $('v_md').textContent = fmt(h.MARGE_DISTRIB * 100, 0) + ' %'; $('v_ck').textContent = eur(h.FABRICATION_KG) + '/kg';
   $('v_e200').textContent = eur(h.EMB_200); $('v_e85').textContent = eur(h.EMB_85); $('v_cv').textContent = fmt(h.AUTRES_FRAIS * 100, 0) + ' %';
@@ -207,6 +218,8 @@ function calc() {
   $('tStress').innerHTML = `<tr><th>Scénario</th><th class="n">Marge gagnée</th><th class="n">Seuil</th><th class="n">Part minimale</th><th class="n">Volume</th><th class="n">Résultat (année 1)</th><th class="n">Cumul 3 ans</th></tr>` +
     st.map(({ nom, r: x }, i) => `<tr${i === 0 ? ' class="vico"' : ''}><td>${nom}</td><td class="n">${eur(x.gain)}</td><td class="n">${isFinite(x.seuil) ? nb(x.seuil) : '–'}</td><td class="n">${pcta(x.partMin, 1)}</td><td class="n">${nb(x.volume)}</td><td class="n ${cls(x.resultat)}"><b>${sg(x.resultat)}</b></td><td class="n ${cls(x.cumul3)}">${sg(x.cumul3)}</td></tr>`).join('');
   const chute = 1 - r.seuil / r.volume;
+  const nRouge1 = st.filter(s => s.r.resultat < 0).length, nRouge3 = st.filter(s => s.r.cumul3 < 0).length;
+  $('stressClair').innerHTML = `Ici : ${nRouge1} scénario${nRouge1 > 1 ? 's' : ''} sur ${st.length} perd${nRouge1 > 1 ? 'ent' : ''} de l'argent la 1<sup>re</sup> année, ` + (nRouge3 ? `et ${nRouge3} reste${nRouge3 > 1 ? 'nt' : ''} en perte sur 3 ans.` : `mais <b>tous restent gagnants sur 3 ans</b>. Le risque porte sur la première année.`);
   $('stressTxt').innerHTML = chute > 0
     ? `Le lancement lâche si les ventes sont inférieures de <b>${pcta(chute, 1)}</b> aux prévisions (${nb(r.seuil)} au lieu de ${nb(r.volume)} sachets). L'hypothèse la plus fragile est <b>le volume</b> : le volume de référence (${nb(h.VOLUME_REF)} sachets par an) n'est pas sourcé, et le résultat lui est directement proportionnel.`
     : `Avec ces hypothèses, les ventes attendues (${nb(r.volume)}) sont déjà sous le seuil (${nb(r.seuil)}) : il faudrait <b>${pcta(-chute, 1)}</b> de ventes en plus. L'hypothèse la plus fragile est <b>le volume</b>.`;
