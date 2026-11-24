@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>La décision — Vico chips de lentilles</title>
-<link rel="stylesheet" href="assets/style.css?v=20261123e">
+<link rel="stylesheet" href="assets/style.css?v=20261124a">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="assets/donnees.js?v=20261123e"></script>
-<script src="assets/config.js?v=20261123e"></script>
-<script src="assets/resultats.js?v=20261123e"></script>
-<script src="assets/app.js?v=20261123e"></script>
+<script src="assets/donnees.js?v=20261124a"></script>
+<script src="assets/config.js?v=20261124a"></script>
+<script src="assets/resultats.js?v=20261124a"></script>
+<script src="assets/app.js?v=20261124a"></script>
 </head>
 <body>
 <div class="wrap">
@@ -86,7 +86,7 @@
     </div>
   </div>
 
-  <div class="card scroll">
+  <div class="card scroll" id="stress">
     <h2>d) Stress test</h2>
     <p>Et si nous nous trompons ? On refait le calcul en dégradant une hypothèse à la fois, puis plusieurs ensemble.</p>
     <div class="encart"><span class="titre">En clair</span><p>Le stress test répond à la question : <b>et si on s'est trompé ?</b> Chaque ligne change une seule hypothèse (sauf « Cumul »). En rouge : le projet perd de l'argent la 1<sup>re</sup> année. Regardez aussi la dernière colonne : sur 3 ans, le projet résiste-t-il ?</p><p id="stressClair"></p></div>
@@ -101,7 +101,7 @@
 
   <div class="card scroll" id="hypotheses">
     <h2>f) Hypothèses : valeur, pourquoi, source</h2>
-    <p class="note"><span class="tag t-constate">Constaté</span> chiffre relevé ou mesuré, avec lien. <span class="tag t-estime">Estimé</span> hypothèse de travail, à remplacer par une donnée sourcée.</p>
+    <p class="note"><span class="tag t-constate">Constaté</span> chiffre relevé ou mesuré, avec lien. <span class="tag t-source">Sourcé</span> hypothèse appuyée sur une source citée. <span class="tag t-estime">Estimé</span> estimation du groupe, sans source publique, testée dans le stress test.</p>
     <table id="tHyp"></table>
   </div>
 
@@ -210,8 +210,9 @@ function calc() {
   $('vraisemblance').innerHTML = `<p>Ventes par magasin et par semaine = volume attendu ÷ magasins ÷ 52 semaines :</p>
 <div class="calc">${nb(r.volume)} ÷ ${nb(h.NB_MAGASINS)} ÷ 52 = ${fmt(r.parMagSem, 1)} sachet${r.parMagSem >= 2 ? 's' : ''} de ${G200} g par magasin et par semaine</div>
 <p class="big" style="font-size:28px">${fmt(r.parMagSem, 1)} <span class="note" style="font-size:14px;font-weight:400">par magasin et par semaine</span></p>
+<p>En tonnes : ${nb(r.volume)} × ${fmt(G200 / 1000, 1)} kg = ${fmt(r.volume * G200 / 1e6, 0)} t par an, soit ${fmt(r.volume * G200 / 1e6 / h.MARCHE_CHIPS_T * 100, 3)} % des ${nb(h.MARCHE_CHIPS_T)} t de chips vendues chaque année en grandes surfaces (<a href="https://www.consoglobe.com/pourquoi-les-francais-deviennent-accrocs-aux-chips-cg" target="_blank" rel="noopener">« Pourquoi les Français deviennent accrocs aux chips »</a>, Consoglobe, 28/04/2025, chiffres Circana repris de LSA (consulté le 17/11/2026)).</p>
 <p>Si ce chiffre paraît faible pour un produit en rayon, notre volume de référence est <b>prudent</b>. Le stress test montre l'effet d'un volume deux fois plus élevé (${fmt(r.parMagSem * 2, 1)} sachets par magasin et par semaine).</p>
-<p class="note">Nombre de magasins : ${nb(h.NB_MAGASINS)}, soit environ ${pcta(h.NB_MAGASINS / h.NB_GSA_FRANCE)} des ${nb(h.NB_GSA_FRANCE)} grandes surfaces alimentaires que compte la France (<a href="https://www.insee.fr/fr/statistiques/7652356" target="_blank" rel="noopener">Insee Focus n° 305, 27/07/2023</a>). Cette part de magasins qui référenceraient le 200 g est une hypothèse.</p>`;
+<p class="note">Nombre de magasins : ${nb(h.NB_MAGASINS)}, soit 1 grande surface sur ${Math.round(h.NB_GSA_FRANCE / h.NB_MAGASINS)} (<a href="https://www.insee.fr/fr/statistiques/7652356" target="_blank" rel="noopener">« 30 000 magasins alimentaires sous réseaux d'enseigne couvrent tous les bassins de vie »</a>, Insee Focus n° 305, 27/07/2023 (consulté le 17/11/2026)).</p>`;
 
   // d) stress test
   const st = stressTest(h);
@@ -240,19 +241,19 @@ const K = CONFIG, R0 = modele();
 const H = [
   ['Prix du 200 g', eur(K.PRIX_200), `Tendance des concurrents (${eur(T_TOUS.prix)}) arrondie à un prix psychologique ; écart de ${pct(ecArr(R0.ecart))} au kilo, celui de la version B.`, `<a href="format-familial.html">Le prix du ${G200} g</a> (${L_RELEVE()}) et <a href="client.html">questionnaire</a>`, 'c'],
   ['Prix du 85 g', eur(PRIX85), `Moyenne des ${V85.length} prix relevés, arrondie au centime.`, L_RELEVE(), 'c'],
-  ['TVA', fmt(K.TVA * 100, 1) + ' %', 'Taux réduit des denrées destinées à l\'alimentation humaine (article 278-0 bis du CGI). Les snacks salés ne font pas partie des exceptions (confiserie, chocolat, margarines, caviar, boissons alcooliques).', '<a href="https://bofip.impots.gouv.fr/bofip/2033-PGP.html/identifiant=BOI-TVA-LIQ-30-10-10-20251119" target="_blank" rel="noopener">BOFIP, BOI-TVA-LIQ-30-10-10 (version du 19/11/2025)</a>', 'c'],
-  ['Marge du distributeur', fmt(K.MARGE_DISTRIB * 100, 0) + ' %', 'Ordre de grandeur courant en épicerie salée ; testé à 35 % dans le stress test.', '<b>Estimation du groupe</b> (aucune source publique trouvée).', 'e'],
-  ['Coût de fabrication', eur(K.FABRICATION_KG) + '/kg', 'Matières (farine de lentilles, huile, arômes), énergie et main-d\'œuvre ; testé à +15 %.', '<b>Estimation du groupe</b> (aucune source publique trouvée).', 'e'],
-  ['Emballage', `${eur(K.EMB_200)} (${G200} g) / ${eur(K.EMB_85)} (85 g)`, 'Le sachet plus grand coûte plus cher, mais pas proportionnellement au poids.', '<b>Estimation du groupe</b> (aucune source publique trouvée).', 'e'],
+  ['TVA', fmt(K.TVA * 100, 1) + ' %', 'Taux réduit des denrées destinées à l\'alimentation humaine (article 278-0 bis du CGI). Les snacks salés ne font pas partie des exceptions (confiserie, chocolat, margarines, caviar, boissons alcooliques).', '<a href="https://bofip.impots.gouv.fr/bofip/2033-PGP.html/identifiant=BOI-TVA-LIQ-30-10-10-20251119" target="_blank" rel="noopener">« TVA - Liquidation - Taux réduits - Produits destinés à l\'alimentation humaine »</a>, BOFIP, BOI-TVA-LIQ-30-10-10, version du 19/11/2025 (consulté le 17/11/2026)', 'c'],
+  ['Marge du distributeur', fmt(K.MARGE_DISTRIB * 100, 0) + ' %', `${fmt(K.MARGE_DISTRIB * 100, 0)} % retenus, au-dessus de la moyenne observée (${K.MARGE_GMS_OBSERVEE.map(x => fmt(x * 100, 0)).join('-')} %) : hypothèse volontairement pessimiste. Testé à 35 % dans le <a href="#stress">stress test</a>.`, `Marge brute de la grande distribution alimentaire : ${K.MARGE_GMS_OBSERVEE.map(x => fmt(x * 100, 0)).join(' à ')} % du chiffre d'affaires. <a href="https://www.presse-citron.net/enquete-qui-profite-vraiment-augmentation-prix-courses-alimentaires/" target="_blank" rel="noopener">« Qui profite vraiment de l'augmentation des prix de vos courses alimentaires ? »</a>, Presse-citron, mai 2026, d'après l'Observatoire de la formation des prix et des marges (consulté le 17/11/2026)`, 's'],
+  ['Coût de fabrication', eur(K.FABRICATION_KG) + '/kg', 'Matières (farine de lentilles, huile, arômes), énergie et main-d\'œuvre.', '<b>Estimation du groupe</b> (aucune source publique trouvée) ; testé à +15 %, voir le <a href="#stress">stress test</a>.', 'e'],
+  ['Emballage', `${eur(K.EMB_200)} (${G200} g) / ${eur(K.EMB_85)} (85 g)`, 'Le sachet plus grand coûte plus cher, mais pas proportionnellement au poids.', '<b>Estimation du groupe</b> (aucune source publique trouvée) ; poids faible dans la marge (à rapprocher du scénario « coût +15 % »), voir le <a href="#stress">stress test</a>.', 'e'],
   ['Autres frais', fmt(K.AUTRES_FRAIS * 100, 0) + ' % du prix payé à Vico', 'Logistique, promotions.', '<b>Estimation du groupe</b> (aucune source publique trouvée).', 'e'],
-  ['Coûts fixes du lancement', nb(K.COUTS_FIXES) + ' €', 'Adaptation de la ligne de conditionnement, design du sachet, frais de référencement payés aux enseignes, communication.', '<b>Estimation du groupe</b> (aucune source publique trouvée).', 'e'],
-  ['Cannibalisation', fmt(K.CANNIBALISATION, 1) + ' sachet de 85 g', 'Valeur médiane entre 0 (le 200 g n\'attire que des nouveaux acheteurs) et 1 (chaque 200 g remplace un 85 g). Le <a href="client.html">questionnaire</a> mesure le choix entre les deux formats, pas ce qui serait acheté sans le 200 g : testé à 1 dans le stress test.', '<b>Estimation du groupe</b> (aucune source publique trouvée).', 'e'],
-  ['Volume de référence', nb(K.VOLUME_REF) + ' sachets de ' + G200 + ' g par an', `Ventes annuelles du ${G200} g si ${pcta(K.PART_REF)} des acheteurs le choisissaient. Hypothèse la plus fragile : le résultat lui est proportionnel.`, '<b>Estimation du groupe</b> (aucune source publique trouvée).', 'e'],
+  ['Coûts fixes du lancement', nb(K.COUTS_FIXES) + ' €', 'Adaptation de la ligne de conditionnement, design du sachet, frais de référencement payés aux enseignes, communication.', '<b>Estimation du groupe</b> (aucune source publique trouvée) ; ils fixent le seuil ; le résultat sur 3 ans montre qu\'ils ne sont payés qu\'une fois, voir le <a href="#stress">stress test</a>.', 'e'],
+  ['Cannibalisation', fmt(K.CANNIBALISATION, 1) + ' sachet de 85 g', 'Valeur médiane entre 0 (le 200 g n\'attire que des nouveaux acheteurs) et 1 (chaque 200 g remplace un 85 g). Le <a href="client.html">questionnaire</a> mesure le choix entre les deux formats, pas ce qui serait acheté sans le 200 g.', '<b>Estimation du groupe</b> (aucune source publique trouvée) ; testée à 1, voir le <a href="#stress">stress test</a>.', 'e'],
+  ['Volume de référence', nb(K.VOLUME_REF) + ' sachets de ' + G200 + ' g par an', `Ventes annuelles du ${G200} g si ${pcta(K.PART_REF)} des acheteurs le choisissaient. Ventes attendues : ${nb(R0.volume)} sachets × ${fmt(G200 / 1000, 1)} kg = ${fmt(R0.volume * G200 / 1e6, 0)} t, soit ${fmt(R0.volume * G200 / 1e6 / K.MARCHE_CHIPS_T * 100, 3)} % des ${nb(K.MARCHE_CHIPS_T)} t de chips vendues chaque année en grandes surfaces : un volume prudent. Hypothèse la plus fragile : le résultat lui est proportionnel (voir le <a href="#stress">stress test</a>).`, `Environ ${nb(K.MARCHE_CHIPS_T)} tonnes de chips vendues par an en grandes surfaces. <a href="https://www.consoglobe.com/pourquoi-les-francais-deviennent-accrocs-aux-chips-cg" target="_blank" rel="noopener">« Pourquoi les Français deviennent accrocs aux chips »</a>, Consoglobe, 28/04/2025, chiffres Circana repris de LSA (consulté le 17/11/2026)`, 's'],
   ['Part de référence', pcta(K.PART_REF), 'Part qui choisit le 200 g dans la meilleure version mesurée (C) : sert à convertir une part de choix en volume.', `<a href="client.html">Questionnaire</a>, ${RESULTATS.collecte.debut}–${RESULTATS.collecte.fin}`, 'c'],
-  ['Nombre de magasins', nb(K.NB_MAGASINS) + ' magasins', `Environ ${pcta(K.NB_MAGASINS / K.NB_GSA_FRANCE)} des grandes surfaces alimentaires françaises. Sert seulement à contrôler la vraisemblance du volume (ventes par magasin et par semaine).`, `${nb(K.NB_GSA_FRANCE)} grandes surfaces alimentaires au 01/01/2020 : <a href="https://www.insee.fr/fr/statistiques/7652356" target="_blank" rel="noopener">Insee Focus n° 305, 27/07/2023</a>. Part référencée : estimée.`, 'e']
+  ['Nombre de magasins', nb(K.NB_MAGASINS) + ' magasins', `${nb(K.NB_MAGASINS)} magasins, soit 1 grande surface sur ${Math.round(K.NB_GSA_FRANCE / K.NB_MAGASINS)}. Sert seulement à contrôler la vraisemblance du volume (ventes par magasin et par semaine).`, `${nb(K.NB_GSA_FRANCE)} grandes surfaces alimentaires au 01/01/2020. <a href="https://www.insee.fr/fr/statistiques/7652356" target="_blank" rel="noopener">« 30 000 magasins alimentaires sous réseaux d'enseigne couvrent tous les bassins de vie »</a>, Insee Focus n° 305, 27/07/2023 (consulté le 17/11/2026)`, 's']
 ];
 $('tHyp').innerHTML = `<tr><th>Hypothèse</th><th>Valeur</th><th>Pourquoi</th><th>Source</th></tr>` +
-  H.map(([n, v, p, s, t]) => `<tr><td><b>${n}</b><br><span class="tag ${t === 'c' ? 't-constate' : 't-estime'}">${t === 'c' ? 'Constaté' : 'Estimé'}</span></td><td>${v}</td><td>${p}</td><td>${s}</td></tr>`).join('');
+  H.map(([n, v, p, s, t]) => `<tr><td><b>${n}</b><br><span class="tag ${({ c: 't-constate', s: 't-source', e: 't-estime' })[t]}">${({ c: 'Constaté', s: 'Sourcé', e: 'Estimé' })[t]}</span></td><td>${v}</td><td>${p}</td><td>${s}</td></tr>`).join('');
 
 /* g) Recommandation (valeurs de config.js) */
 const Pr = RESULTATS.profils, vA = VERSIONS.find(v => v.id === 'A');

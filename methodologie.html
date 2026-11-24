@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Méthodologie — Vico chips de lentilles</title>
-<link rel="stylesheet" href="assets/style.css?v=20261123e">
-<script src="assets/donnees.js?v=20261123e"></script>
-<script src="assets/config.js?v=20261123e"></script>
-<script src="assets/resultats.js?v=20261123e"></script>
-<script src="assets/app.js?v=20261123e"></script>
+<link rel="stylesheet" href="assets/style.css?v=20261124a">
+<script src="assets/donnees.js?v=20261124a"></script>
+<script src="assets/config.js?v=20261124a"></script>
+<script src="assets/resultats.js?v=20261124a"></script>
+<script src="assets/app.js?v=20261124a"></script>
 </head>
 <body data-pas-de-liste>
 <div class="wrap">
@@ -75,8 +75,22 @@
 
   <div class="card" id="a-sourcer">
     <h2>Sources et estimations</h2>
-    <p>Tous les chiffres du site ont une source en lien, sauf sept hypothèses de coûts et de volume pour lesquelles nous n’avons trouvé aucune source publique : marge du distributeur, coût de fabrication, emballage, autres frais, coûts fixes du lancement, cannibalisation et volume de référence. Ce sont <b>nos estimations</b>, signalées comme telles sur la page <a href="decision.html#hypotheses">La décision</a> et testées dans le stress test.</p>
-    <ul id="lASourcer"></ul>
+    <h3>Nos données (constatées)</h3>
+    <ul>
+      <li>Relevé de prix du 01/10/2026 sur les sites drive de Carrefour, Auchan, E.Leclerc et Intermarché : <a href="#releve">le relevé</a>.</li>
+      <li>Questionnaire, collecte du 15 au 20/10/2026, 130 réponses analysées : <a href="#questionnaire">le questionnaire</a> et <a href="client.html">Le client</a>.</li>
+    </ul>
+    <h3>Sources externes</h3>
+    <ul>
+      <li>Comptes d'Intersnack France : <a href="https://www.xerfi.com/etudes-par-entreprise/intersnack-france_412581878" target="_blank" rel="noopener">« Intersnack France »</a>, fiche entreprise Xerfi (consulté le 17/11/2026) ; chiffre d'affaires et résultats recoupés avec <a href="https://www.lejournaldesentreprises.com/entreprise/intersnack-france" target="_blank" rel="noopener">« Intersnack France »</a>, Le Journal des Entreprises, données Altarès (consulté le 17/11/2026).</li>
+      <li>Marques du groupe : <a href="https://www.intersnack.fr/en/our-brands/in-brief" target="_blank" rel="noopener">« Our brands in brief »</a>, site d'Intersnack France (consulté le 17/11/2026) ; Bénénuts : <a href="https://www.auchan.fr/benenuts-cacahuetes-grillees-a-sec/pr-C1225905" target="_blank" rel="noopener">« Bénénuts cacahuètes grillées à sec »</a>, fiche produit Auchan (consulté le 17/11/2026).</li>
+      <li>TVA à 5,5 % : <a href="https://bofip.impots.gouv.fr/bofip/2033-PGP.html/identifiant=BOI-TVA-LIQ-30-10-10-20251119" target="_blank" rel="noopener">« TVA - Liquidation - Taux réduits - Produits destinés à l'alimentation humaine »</a>, BOFIP, BOI-TVA-LIQ-30-10-10, version du 19/11/2025 (consulté le 17/11/2026).</li>
+      <li>Marge du distributeur (30 % retenus, au-dessus des 22 à 23 % observés : hypothèse volontairement pessimiste) : <a href="https://www.presse-citron.net/enquete-qui-profite-vraiment-augmentation-prix-courses-alimentaires/" target="_blank" rel="noopener">« Qui profite vraiment de l'augmentation des prix de vos courses alimentaires ? »</a>, Presse-citron, mai 2026, d'après l'Observatoire de la formation des prix et des marges (consulté le 17/11/2026).</li>
+      <li>Volume (contrôle de vraisemblance, environ 88 000 t de chips par an en grandes surfaces) : <a href="https://www.consoglobe.com/pourquoi-les-francais-deviennent-accrocs-aux-chips-cg" target="_blank" rel="noopener">« Pourquoi les Français deviennent accrocs aux chips »</a>, Consoglobe, 28/04/2025, chiffres Circana repris de LSA (consulté le 17/11/2026).</li>
+      <li>Nombre de magasins (3 000, soit 1 grande surface sur 4 parmi environ 12 000) : <a href="https://www.insee.fr/fr/statistiques/7652356" target="_blank" rel="noopener">« 30 000 magasins alimentaires sous réseaux d'enseigne couvrent tous les bassins de vie »</a>, Insee Focus n° 305, 27/07/2023 (consulté le 17/11/2026).</li>
+    </ul>
+    <h3>Nos estimations (sans source publique)</h3>
+    <p>Coût de fabrication, coûts de lancement, emballage, cannibalisation (et autres frais) : ce sont <b>nos estimations</b>, marquées « Estimé » dans le <a href="decision.html#hypotheses">bloc Hypothèses</a>. Leur effet est mesuré dans le <a href="decision.html#stress">stress test</a>.</p>
   </div>
 </div>
 <script>
@@ -90,9 +104,6 @@ document.getElementById('lQuest').innerHTML = [
   `<b>Réponses</b> : ${R.nettoyage.recues} reçues, <b>${nQ} analysées</b> après nettoyage (hors cible et réponses bâclées) : détail sur <a href="client.html">Le client</a>.`,
   `<b>Questions</b> : choix entre les deux paquets, contrôle de perception du prix au kilo, Gabor-Granger sur le ${G200} g seul, profil (âge, foyer, habitudes d'achat).`
 ].map(x => `<li>${x}</li>`).join('');
-const AS = [
-];
-document.getElementById('lASourcer').innerHTML = AS.map(([h, t, l]) => `<li><a href="${h.includes("#") ? h : h + "#a-sourcer-liste"}">${t}</a><ul>${l.map(x => `<li>${x}</li>`).join('')}</ul></li>`).join('');
 document.querySelectorAll('.d').forEach(e => e.textContent = DATA.date);
 document.getElementById('mags').innerHTML = `<tr><th>Ville</th><th>Enseigne</th><th>Magasin</th><th class="n">Produits trouvés</th></tr>` +
   DATA.magasins.slice().sort((a, b) => a.ville.localeCompare(b.ville) || a.enseigne.localeCompare(b.enseigne))

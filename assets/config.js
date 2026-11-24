@@ -29,5 +29,9 @@ const CONFIG = {
 
   // --- Contrôle de vraisemblance du volume ---
   NB_MAGASINS: 3000,        // magasins qui référenceraient le 200 g (hypothèse)
-  NB_GSA_FRANCE: 12000      // grandes surfaces alimentaires en France au 01/01/2020 (Insee Focus n° 305, 27/07/2023)
+  NB_GSA_FRANCE: 12000,     // grandes surfaces alimentaires en France au 01/01/2020 (Insee Focus n° 305, 27/07/2023)
+
+  // --- Repères sourcés (voir decision.html, bloc « Hypothèses ») ---
+  MARGE_GMS_OBSERVEE: [0.22, 0.23], // marge brute de la grande distribution alimentaire, % du CA (Presse-citron, mai 2026, d'après l'OFPM)
+  MARCHE_CHIPS_T: 88000             // tonnes de chips vendues par an en grandes surfaces (Consoglobe, 28/04/2025, chiffres Circana repris de LSA)
 };

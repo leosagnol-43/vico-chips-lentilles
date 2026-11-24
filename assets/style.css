@@ -66,6 +66,7 @@ p.lead{color:var(--muted);margin:0 0 22px;font-size:16px}
 .t-ref{background:var(--rouge-pale);color:var(--rouge)} .t-direct{background:var(--vert-pale);color:var(--vert-fonce)}
 .t-indirect{background:#f1e6da;color:var(--brun)} .t-substitut{background:#fff0dc;color:var(--orange)}
 .t-constate{background:var(--vert-pale);color:var(--vert-fonce)} .t-estime{background:var(--jaune-pale);color:#9a6a00}
+.t-source{background:#e3f0f7;color:#2f6f9f}
 
 /* ---------- Tableaux ---------- */
 table{width:100%;border-collapse:collapse;font-size:14px}
