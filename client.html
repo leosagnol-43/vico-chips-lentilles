@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Le client — Vico chips de lentilles</title>
-<link rel="stylesheet" href="assets/style.css?v=20261124a">
+<link rel="stylesheet" href="assets/style.css?v=20261124b">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="assets/donnees.js?v=20261124a"></script>
-<script src="assets/config.js?v=20261124a"></script>
+<script src="assets/donnees.js?v=20261124b"></script>
+<script src="assets/config.js?v=20261124b"></script>
 <!-- RESULTATS : objet des résultats du questionnaire, source : Google Sheet Chips vico, onglet Réponses.
      Il est dans assets/resultats.js pour que l'accueil et la décision utilisent exactement les mêmes chiffres. -->
-<script src="assets/resultats.js?v=20261124a"></script>
-<script src="assets/app.js?v=20261124a"></script>
+<script src="assets/resultats.js?v=20261124b"></script>
+<script src="assets/app.js?v=20261124b"></script>
 </head>
 <body>
 <div class="wrap">
@@ -160,7 +160,7 @@ document.getElementById('ggConclusion').innerHTML = `<b>Conclusion</b> : présen
 
 /* Profils */
 const Pr = R.profils;
-document.getElementById('baseProfils').innerHTML = `Part qui choisit le ${G200} g selon le profil. <b>Calculé sur ${Pr.base} répondants, à mettre à jour sur ${n}.</b> Tests du khi², analyse du Google Sheet (onglet Réponses).`;
+document.getElementById('baseProfils').innerHTML = `Part qui choisit le ${G200} g selon le profil (${Pr.base} répondants). Tests du khi², analyse des réponses au questionnaire.`;
 document.getElementById('tProfils').innerHTML = `<tr><th>Profil</th><th class="n">Oui</th><th class="n">Non</th><th class="n">p</th><th>Ce qu'on en retient</th></tr>` + [
   ['Foyer avec enfants', Pr.enfants, 'Les familles sont la cible naturelle du format familial.'],
   ['Habitué des grands formats', Pr.grandsFormats, `Placer le ${G200} g à côté des grands paquets de chips.`],

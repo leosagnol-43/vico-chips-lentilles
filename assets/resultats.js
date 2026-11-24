@@ -47,13 +47,13 @@ const RESULTATS = {
     { prix: 6.49, part: 0 }
   ],
 
-  // Qui choisit le 200 g (calculé sur 132 répondants, à mettre à jour sur 130)
+  // Qui choisit le 200 g (130 répondants)
   profils: {
-    base: 132,
-    enfants: { oui: 0.61, non: 0.35, p: 0.0075 },
-    grandsFormats: { oui: 0.66, non: 0.37, p: 0.0057 },
+    base: 130,
+    enfants: { oui: 0.59, non: 0.35, p: 0.0075 },
+    grandsFormats: { oui: 0.68, non: 0.37, p: 0.0057 },
     etudiants: { oui: 0.31, non: 0.51, p: 0.024 },
-    economieVue: { oui: 0.68, non: 0.18, p: 0.00001, nePasVoir: 1 / 3 },
+    economieVue: { oui: 0.68, non: 0.15, p: 0.00001, nePasVoir: 1 / 3 },
     dejaAchete: { accepteGG1: 0.36, accepteGG1Non: 0.15, p: 0.0061, jamaisAchete: 0.65 }
   }
 };
